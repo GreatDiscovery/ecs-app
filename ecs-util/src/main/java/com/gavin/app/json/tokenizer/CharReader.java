@@ -93,6 +93,7 @@ public class CharReader extends Reader {
         if (markedChar <= UNMARKED) {
             dst = 0;
         } else {
+            // todo 未实现mark功能
             int delta = nextChar - markedChar;
             if (delta >= readAheadLimit) {
                 markedChar = INVALIDATED;
@@ -108,7 +109,7 @@ public class CharReader extends Reader {
         }
         int n;
         do {
-            n = read(cb, dst, cb.length - dst);
+            n = in.read(cb, dst, cb.length - dst);
         } while (n == 0);
         if (n > 0) {
             nextChar = dst;
@@ -135,7 +136,7 @@ public class CharReader extends Reader {
 
     @Override
     public void close() throws IOException {
-
+        in.close();
     }
 
     /**
@@ -148,5 +149,9 @@ public class CharReader extends Reader {
             return -1;
         }
         return cb[Math.max(0, nextChar - 1)];
+    }
+
+    public void back() {
+        nextChar = Math.max(0, nextChar--);
     }
  }

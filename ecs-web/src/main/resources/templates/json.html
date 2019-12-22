@@ -4,6 +4,7 @@
 这样在后面的th标签就不会报错
  -->
 <html  xmlns:th="http://www.thymeleaf.org">
+
 <head lang="en">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <title th:text="${username}">xx</title>
@@ -14,7 +15,7 @@
 <h2>1、通过直接访问对象的方式</h2>
 <p th:text="${userInfo.username}"></p>
 <p th:text="${userInfo.password}"></p>
-
+<textarea>请输入字符</textarea>
 
 <h2>2、通过th:object访问对象的方式</h2>
 <div th:object="${userInfo}">
@@ -29,5 +30,7 @@
     <input type="text" th:field="*{password}" />
     <input type="submit" />
 </form>
+
+<form action="#" th:action="@{/escape}"></form>
 </body>
 </html>

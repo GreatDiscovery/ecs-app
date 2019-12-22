@@ -3,6 +3,8 @@ package com.gavin.app.json.tokenizer;
 import com.gavin.app.json.model.JsonParseException;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author gavin
@@ -17,15 +19,16 @@ public class Tokenizer {
         this.tokens = new TokenList<>();
     }
 
-    public void startTokenize() throws IOException {
+    public TokenList startTokenize() throws IOException {
         Token token = null;
         do {
             token = read();
             tokens.add(token);
         } while (token.getTokenType() != TokenType.END_DOC);
+        return tokens;
     }
 
-    public Token read() throws IOException {
+    private Token read() throws IOException {
         char ch;
         Token token;
         for (; ; ) {
@@ -80,7 +83,7 @@ public class Tokenizer {
                 token = readNum();
                 break;
             default:
-                token = null;
+                token = new Token(TokenType.END_DOC, null);
         }
         return token;
     }
@@ -112,14 +115,31 @@ public class Tokenizer {
     }
 
     private Token readString() throws IOException {
-        while (charReader.read() != '"') {
-
+        StringBuilder sb = new StringBuilder();
+        char ch;
+        while ((ch = (char) charReader.read()) != '"') {
+            sb.append(ch);
         }
-        return null;
+        return new Token(TokenType.STRING, sb.toString());
     }
 
+    // todo 未完成,需要加上负数和小数
     private Token readNum() throws IOException {
-        return null;
+        StringBuilder sb = new StringBuilder();
+        int ch = charReader.peek();
+        for (; ;) {
+            if (isDigit(ch)) {
+                sb.append(ch);
+            } else {
+                charReader.back();
+                break;
+            }
+        }
+        return new Token(TokenType.NUMBER, sb.toString());
+    }
+
+    private boolean isDigit(int num) {
+        return num >= 48 && num <= 57;
     }
 
 }

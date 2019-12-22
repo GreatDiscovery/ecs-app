@@ -20,5 +20,4 @@ public class TokenList<E>{
         tokens.add(e);
     }
 
-
 }

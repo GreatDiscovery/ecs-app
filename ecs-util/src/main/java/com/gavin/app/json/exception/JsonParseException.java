@@ -1,4 +1,4 @@
-package com.gavin.app.json.model;
+package com.gavin.app.json.exception;
 
 /**
  * @author gavin

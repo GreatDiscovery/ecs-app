@@ -1,10 +1,8 @@
 package com.gavin.app.json.tokenizer;
 
-import com.gavin.app.json.model.JsonParseException;
+import com.gavin.app.json.exception.JsonParseException;
 
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author gavin

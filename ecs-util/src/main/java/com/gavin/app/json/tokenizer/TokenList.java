@@ -1,13 +1,14 @@
 package com.gavin.app.json.tokenizer;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * @author gavin
  * @date 2019-12-19 22:42
  */
-public class TokenList<E>{
+public class TokenList<E> implements Iterator<E> {
     private List<E> tokens;
     private int index;
 
@@ -20,4 +21,21 @@ public class TokenList<E>{
         tokens.add(e);
     }
 
+    public int size() {
+        return tokens.size();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return index < tokens.size();
+    }
+
+    @Override
+    public E next() {
+        return tokens.get(index++);
+    }
+
+    public E head() {
+        return tokens.get(0);
+    }
 }

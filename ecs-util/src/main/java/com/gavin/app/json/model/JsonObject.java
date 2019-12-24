@@ -17,4 +17,9 @@ public class JsonObject<K, V> {
     public V put(K key, V value) {
        return map.put(key, value);
     }
+
+    @Override
+    public String toString() {
+        return map.toString();
+    }
 }

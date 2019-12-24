@@ -38,4 +38,8 @@ public class TokenList<E> implements Iterator<E> {
     public E head() {
         return tokens.get(0);
     }
+
+    public E peekPrevious() {
+        return tokens.get(Math.max(0, index - 2));
+    }
 }

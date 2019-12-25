@@ -13,8 +13,11 @@ public final class Streams {
         boolean isEmpty = true;
         try {
             reader.peek();
+            isEmpty = false;
+            return TypeAdapters.JSON_ELEMENT.read(reader);
         } catch (Exception e) {
 
         }
+        return null;
     }
 }

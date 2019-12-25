@@ -83,6 +83,12 @@ public class JsonReader implements Closeable {
         if (p == PEEKED_NONE) {
             p = doPeek();
         }
+
+        switch (p) {
+            case PEEKED_BEGIN_OBJECT:
+                return JsonToken.BEGIN_OBJECT;
+        }
+        return null;
     }
 
     private int doPeek() throws IOException {
@@ -92,6 +98,13 @@ public class JsonReader implements Closeable {
         }
 
         int c = nextNonWhitespace(true);
+        switch (c) {
+            case '{':
+                return peeked = PEEKED_BEGIN_OBJECT;
+            case '"':
+                return peeked = PEEKED_DOUBLE_QUOTED;
+        }
+        return -1;
     }
 
     private int nextNonWhitespace(boolean throwOnEof) throws IOException {
@@ -100,6 +113,7 @@ public class JsonReader implements Closeable {
         int l = this.limit;
 
         while (true) {
+            // buffer已经读完了
             if (p == l) {
                 pos = p;
                 if (!fill(1)) {
@@ -110,6 +124,7 @@ public class JsonReader implements Closeable {
             }
 
             int c = buffer[p++];
+
             // 空白符
             if (c == '\n') {
                 lineNumber++;
@@ -123,7 +138,18 @@ public class JsonReader implements Closeable {
             // 注释
             if (c == '/') {
 
+            } else if (c == '#') {
+
             }
+
+            pos = p;
+            return c;
+        }
+
+        if (throwOnEof) {
+            throw new IOException("End of input" + locationString());
+        } else {
+            return -1;
         }
     }
 
@@ -159,10 +185,10 @@ public class JsonReader implements Closeable {
         return false;
     }
 
-    private void ensureOpen() throws IOException {
-        if (in == null) {
-            throw new IOException("stream close");
-        }
+    private String locationString() {
+        int line = lineNumber + 1;
+        int column = pos - lineStart + 1;
+        return "at line " + line + "at column " + column;
     }
 
     @Override

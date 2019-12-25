@@ -7,7 +7,7 @@ import java.util.List;
  * @author gavin
  * @date 2019-12-23 22:35
  */
-public class JsonArray {
+public final class JsonArray extends JsonElement {
     private List<Object> list;
 
     public JsonArray() {

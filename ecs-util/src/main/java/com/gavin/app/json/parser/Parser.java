@@ -29,7 +29,8 @@ public class Parser {
 
     private TokenList<Token> tokens;
 
-    private Parser() {}
+    public Parser() {}
+
     public Parser(TokenList<Token> tokens) {
         this.tokens = tokens;
     }

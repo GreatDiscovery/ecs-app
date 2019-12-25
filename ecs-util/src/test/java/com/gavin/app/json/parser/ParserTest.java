@@ -1,6 +1,7 @@
 package com.gavin.app.json.parser;
 
 
+import com.gavin.app.json.model.JsonObject;
 import com.gavin.app.json.tokenizer.CharReader;
 import com.gavin.app.json.tokenizer.Tokenizer;
 
@@ -19,5 +20,7 @@ public class ParserTest {
         Parser parser = new Parser(tokenizer.startTokenize());
         Object o = parser.parse();
         System.out.println(o);
+
+        Parser parser1 = new Parser();
     }
 }

@@ -191,10 +191,90 @@ public class JsonReader implements Closeable {
         return "at line " + line + "at column " + column;
     }
 
+    public void beginObject() throws IOException {
+        int p = this.peeked;
+        if (p == PEEKED_NONE) {
+            p = doPeek();
+        }
+
+        if (p == PEEKED_BEGIN_OBJECT) {
+            push(JsonScope.EMPTY_OBJECT);
+            peeked = PEEKED_NONE;
+        } else {
+            throw new IllegalStateException("Expected BEGIN_OBJECT but was " + peek() +
+                    " at line " + getLineNumber() + " at column " + getLineColumn());
+        }
+    }
+
+    public boolean hasNext() throws IOException {
+        int p = this.peeked;
+        if (p == PEEKED_NONE) {
+            p = doPeek();
+        }
+        return p != PEEKED_END_OBJECT && p != PEEKED_END_ARRAY;
+    }
+
+    public String nextName() throws IOException {
+        int p = this.peeked;
+        if (p == PEEKED_NONE) {
+            p = doPeek();
+        }
+
+        String result;
+        if (p == PEEKED_DOUBLE_QUOTED) {
+            result = nextQuotedValue('"');
+        }
+        peeked = PEEKED_NONE;
+        return result;
+    }
+
+    private String nextQuotedValue(char c) throws IOException {
+        int p = pos;
+        int l = limit;
+        if (p == l) {
+            fill(1);
+        }
+
+        StringBuilder sb = new StringBuilder();
+        char tmp;
+        while (true) {
+            tmp = buffer[p++];
+            if (tmp == c) {
+                break;
+            }
+            sb.append(tmp);
+        }
+        pos = p;
+        return sb.toString();
+    }
+
     @Override
     public void close() throws IOException {
         if (in != null) {
             in.close();
         }
+    }
+
+    private void push(int newTop) {
+        if (stackSize == stack.length) {
+            resize();
+        }
+        stack[stackSize++] = newTop;
+    }
+
+    private void resize() {
+        if (stackSize == stack.length) {
+            int[] newStack = new int[stackSize * 2];
+            System.arraycopy(stack, 0, newStack, 0, stackSize);
+            stack = newStack;
+        }
+    }
+
+    private int getLineNumber() {
+        return lineNumber + 1;
+    }
+
+    private int getLineColumn() {
+        return pos - lineStart + 1;
     }
 }

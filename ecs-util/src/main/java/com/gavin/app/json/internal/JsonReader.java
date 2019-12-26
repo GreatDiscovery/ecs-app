@@ -1,8 +1,5 @@
 package com.gavin.app.json.internal;
 
-import com.gavin.app.json.internal.JsonScope;
-import com.gavin.app.json.internal.JsonToken;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
@@ -228,24 +225,83 @@ public class JsonReader implements Closeable {
         return result;
     }
 
-    private String nextQuotedValue(char c) throws IOException {
-        int p = pos;
-        int l = limit;
-        if (p == l) {
-            fill(1);
-        }
+    private String nextQuotedValue(char quoted) throws IOException {
+        char[] buffer = this.buffer;
+        StringBuilder builder = new StringBuilder();
 
-        StringBuilder sb = new StringBuilder();
-        char tmp;
         while (true) {
-            tmp = buffer[p++];
-            if (tmp == c) {
-                break;
+            int p = pos;
+            int l = limit;
+            // 这里用start记录第一个字符，有可能不是字符串
+            int start = p;
+
+            while (p < l) {
+                char c = buffer[pos++];
+                int len = p - start - 1;
+
+                if (c == quoted) {
+                    builder.append(buffer, start, len);
+                    return builder.toString();
+                } else if (c == '\\') {
+                    pos = p;
+                    builder.append(buffer, start, len);
+                    builder.append(readEscapeCharacter());
+                    p = pos;
+                    l = limit;
+                    start = p;
+                } else if (c == '\n') {
+                    lineNumber++;
+                    lineStart = p;
+                }
             }
-            sb.append(tmp);
+
+            pos = p;
+            if (!fill(1)) {
+                throw new IOException("填充失败");
+            }
         }
-        pos = p;
-        return sb.toString();
+    }
+
+    private char readEscapeCharacter() throws IOException {
+        if (pos == limit && !fill(1)) throw new IOException("Unterminated escape sequence");
+        char escape = buffer[pos++];
+        switch (escape) {
+            case 'n':
+                return '\n';
+            case 't':
+                return '\t';
+            case 'r':
+                return '\r';
+            case 'u':
+                if (pos + 4 > limit && !fill(4)) {
+                    throw new IOException("Unterminated escape sequence");
+                }
+                char result = 0;
+                for (int i = pos, end = i + 4; i < end; i++) {
+                    result <<= 4;
+                    char c = buffer[i];
+                    if (c >= '0' && c <= '9') {
+                        result += (c - '0');
+                    } else if (c >= 'a' && c <= 'f') {
+                        // a == 10, b == 11 ... f == 15
+                        result += (c - 'a' + 10);
+                    } else if (c >= 'A' && c <= 'F') {
+                        result += (c - 'A' + 10);
+                    } else {
+                        throw new IOException("Unterminated escape sequence");
+                    }
+                }
+                pos += 4;
+                return result;
+
+            case '"':
+            case '\\':
+            case '/':
+                return escape;
+
+            default:
+                throw new IOException("Invalid escape sequence");
+        }
     }
 
     @Override

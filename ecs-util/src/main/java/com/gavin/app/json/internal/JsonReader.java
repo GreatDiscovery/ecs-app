@@ -92,6 +92,17 @@ public class JsonReader implements Closeable {
         int peekStack = stack[stackSize - 1];
         if (peekStack == JsonScope.EMPTY_DOCUMENT) {
             stack[stackSize - 1] = JsonScope.NONEMPTY_DOCUMENT;
+        } else if (peekStack == JsonScope.EMPTY_OBJECT || peekStack == JsonScope.NONEMPTY_OBJECT)  {
+            stack[stackSize - 1] = JsonScope.DANGLING_NAME;
+            if (peekStack == JsonScope.NONEMPTY_OBJECT) {
+                int c = nextNonWhitespace(true);
+                switch (c) {
+                    case '':
+                    case '':
+                    case '':
+                }
+
+            }
         }
 
         int c = nextNonWhitespace(true);
@@ -203,6 +214,21 @@ public class JsonReader implements Closeable {
         }
     }
 
+    public void endObject() throws IOException {
+        int p = peeked;
+        if (p == PEEKED_NONE) {
+            p = doPeek();
+        }
+
+        if (p == PEEKED_END_OBJECT) {
+            stackSize--;
+            peeked = PEEKED_NONE;
+        } else {
+            throw new IllegalStateException("Expected END_OBJECT but was " + peek()
+                    + " at line " + getLineNumber() + " column " + getLineColumn());
+        }
+    }
+
     public boolean hasNext() throws IOException {
         int p = this.peeked;
         if (p == PEEKED_NONE) {
@@ -220,6 +246,8 @@ public class JsonReader implements Closeable {
         String result;
         if (p == PEEKED_DOUBLE_QUOTED) {
             result = nextQuotedValue('"');
+        } else {
+            throw new IOException("invalid stream");
         }
         peeked = PEEKED_NONE;
         return result;
@@ -237,14 +265,13 @@ public class JsonReader implements Closeable {
 
             while (p < l) {
                 char c = buffer[pos++];
-                int len = p - start - 1;
 
                 if (c == quoted) {
-                    builder.append(buffer, start, len);
+                    builder.append(buffer, start, pos - start - 1);
                     return builder.toString();
                 } else if (c == '\\') {
                     pos = p;
-                    builder.append(buffer, start, len);
+                    builder.append(buffer, start, pos - start - 1);
                     builder.append(readEscapeCharacter());
                     p = pos;
                     l = limit;

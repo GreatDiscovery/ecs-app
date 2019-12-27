@@ -24,3 +24,12 @@ public class ParserTest {
         Parser parser1 = new Parser();
     }
 }
+
+class GJsonParse {
+    public static void main(String[] args) {
+        String json = "{\"name\":\"gavin\",\"sex\":\"male\"}";
+        JsonParser jsonParser = new JsonParser();
+        Object o = jsonParser.parse(json);
+        System.out.println(o.toString());
+    }
+}

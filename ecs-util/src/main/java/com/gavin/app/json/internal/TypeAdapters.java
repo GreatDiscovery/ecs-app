@@ -2,6 +2,7 @@ package com.gavin.app.json.internal;
 
 import com.gavin.app.json.model.JsonElement;
 import com.gavin.app.json.model.JsonObject;
+import com.gavin.app.json.model.JsonPrimitive;
 
 import java.io.IOException;
 
@@ -26,6 +27,8 @@ public final class TypeAdapters {
                     }
                     in.endObject();
                     return jsonObject;
+                case STRING:
+                    return new JsonPrimitive(in.nextString());
             }
             return null;
         }

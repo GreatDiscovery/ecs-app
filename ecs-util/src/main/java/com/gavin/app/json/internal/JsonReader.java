@@ -84,6 +84,8 @@ public class JsonReader implements Closeable {
         switch (p) {
             case PEEKED_BEGIN_OBJECT:
                 return JsonToken.BEGIN_OBJECT;
+            case PEEKED_DOUBLE_QUOTED:
+                return JsonToken.STRING;
         }
         return null;
     }
@@ -92,17 +94,40 @@ public class JsonReader implements Closeable {
         int peekStack = stack[stackSize - 1];
         if (peekStack == JsonScope.EMPTY_DOCUMENT) {
             stack[stackSize - 1] = JsonScope.NONEMPTY_DOCUMENT;
-        } else if (peekStack == JsonScope.EMPTY_OBJECT || peekStack == JsonScope.NONEMPTY_OBJECT)  {
+        } else if (peekStack == JsonScope.EMPTY_OBJECT || peekStack == JsonScope.NONEMPTY_OBJECT) {
             stack[stackSize - 1] = JsonScope.DANGLING_NAME;
             if (peekStack == JsonScope.NONEMPTY_OBJECT) {
                 int c = nextNonWhitespace(true);
                 switch (c) {
-                    case '':
-                    case '':
-                    case '':
+                    case '}':
+                        return peeked = PEEKED_END_OBJECT;
+                    case ',':
+                        break;
+                    default:
+                        throw new IOException("Unterminated object");
                 }
 
             }
+
+            int c = nextNonWhitespace(true);
+            switch (c) {
+                case '"':
+                    return peeked = PEEKED_DOUBLE_QUOTED_NAME;
+                case '\'':
+                    return peeked = PEEKED_SINGLE_QUOTED_NAME;
+                default:
+                    pos--;
+                    return peeked = PEEKED_UNQUOTED_NAME;
+
+            }
+        } else if (peekStack == JsonScope.DANGLING_NAME) {
+            stack[stackSize - 1] = JsonScope.NONEMPTY_OBJECT;
+            int c = nextNonWhitespace(true);
+            switch (c) {
+                case ':':
+                    break;
+            }
+
         }
 
         int c = nextNonWhitespace(true);
@@ -159,6 +184,23 @@ public class JsonReader implements Closeable {
         } else {
             return -1;
         }
+    }
+
+    public String nextString() throws IOException {
+        int p = peeked;
+        if (p == PEEKED_NONE) {
+            doPeek();
+        }
+
+        String result = "";
+        if (p == PEEKED_DOUBLE_QUOTED) {
+            result = nextQuotedValue('"');
+        } else {
+            throw new IllegalStateException("Expected a string but was " + peek() + locationString());
+        }
+
+        peeked = PEEKED_NONE;
+        return result;
     }
 
     private boolean fill(int minium) throws IOException {
@@ -244,7 +286,7 @@ public class JsonReader implements Closeable {
         }
 
         String result;
-        if (p == PEEKED_DOUBLE_QUOTED) {
+        if (p == PEEKED_DOUBLE_QUOTED_NAME) {
             result = nextQuotedValue('"');
         } else {
             throw new IOException("invalid stream");

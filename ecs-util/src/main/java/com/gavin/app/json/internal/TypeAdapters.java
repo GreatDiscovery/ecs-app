@@ -15,7 +15,7 @@ public final class TypeAdapters {
         throw new UnsupportedOperationException();
     }
 
-    public static final TypeAdapter<JsonElement> JSON_ELEMENT = new TypeAdapter() {
+    public static final TypeAdapter<JsonElement> JSON_ELEMENT = new TypeAdapter<JsonElement>() {
         @Override
         public JsonElement read(JsonReader in) throws IOException {
             switch (in.peek()) {
@@ -32,5 +32,15 @@ public final class TypeAdapters {
             }
             return null;
         }
+
+        @Override
+        public void write(JsonWriter out, JsonElement value) throws IOException {
+            if (value.isJsonObject()) {
+                out.beginObject();
+
+                out.endObject();
+            }
+        }
     };
+
 }

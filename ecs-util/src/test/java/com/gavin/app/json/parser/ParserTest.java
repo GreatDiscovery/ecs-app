@@ -1,6 +1,7 @@
 package com.gavin.app.json.parser;
 
 
+import com.gavin.app.json.model.JsonElement;
 import com.gavin.app.json.model.JsonObject;
 import com.gavin.app.json.tokenizer.CharReader;
 import com.gavin.app.json.tokenizer.Tokenizer;
@@ -20,8 +21,6 @@ public class ParserTest {
         Parser parser = new Parser(tokenizer.startTokenize());
         Object o = parser.parse();
         System.out.println(o);
-
-        Parser parser1 = new Parser();
     }
 }
 
@@ -29,7 +28,7 @@ class GJsonParse {
     public static void main(String[] args) {
         String json = "{\"name\":\"gavin\",\"sex\":\"male\"}";
         JsonParser jsonParser = new JsonParser();
-        Object o = jsonParser.parse(json);
+        JsonElement o = jsonParser.parse(json);
         System.out.println(o.toString());
     }
 }

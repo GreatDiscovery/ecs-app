@@ -2,6 +2,8 @@ package com.gavin.app.json.internal;
 
 import com.gavin.app.json.model.JsonElement;
 
+import java.io.IOException;
+
 /**
  * @author: Gavin
  * @date: 2019/12/25 18:50
@@ -19,5 +21,9 @@ public final class Streams {
 
         }
         return null;
+    }
+
+    public static void write(JsonElement element, JsonWriter writer) throws IOException {
+        TypeAdapters.JSON_ELEMENT.write(writer, element);
     }
 }

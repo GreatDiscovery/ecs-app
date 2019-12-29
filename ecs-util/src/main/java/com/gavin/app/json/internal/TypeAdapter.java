@@ -9,4 +9,6 @@ import java.io.IOException;
 public abstract class TypeAdapter<T> {
 
     public abstract T read(JsonReader in) throws IOException;
+
+    public abstract void write(JsonWriter out, T value) throws IOException;
 }

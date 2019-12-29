@@ -1,6 +1,8 @@
 package com.gavin.app.json.internal;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
+import java.util.Comparator;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -12,7 +14,25 @@ import java.util.function.Function;
  * @author gavin
  * @date 2019-12-29 21:11
  */
-public final class LinkedTreeMap<K,V> extends AbstractMap<K,V> {
+public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Serializable {
+
+    private static final Comparator<Comparable> NATURA_ORDER = (a, b) -> { return a.compareTo(b);};
+    private Comparator<? super K> comparator;
+
+    final Node<K, V> head = new Node<>();
+    Node<K, V> root;
+    int size = 0;
+    int modCount = 0;
+
+
+    public LinkedTreeMap() {
+         this((Comparator<? super K>) NATURA_ORDER);
+    }
+
+    public LinkedTreeMap(Comparator<? super K> comparator) {
+        this.comparator = comparator;
+    }
+
     @Override
     public Set<Entry<K, V>> entrySet() {
         return null;
@@ -71,5 +91,35 @@ public final class LinkedTreeMap<K,V> extends AbstractMap<K,V> {
     @Override
     public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         return null;
+    }
+
+    static final class Node<K, V> implements Entry<K, V> {
+        Node<K, V> parent;
+        Node<K, V> left;
+        Node<K, V> right;
+        Node<K, V> next;
+        Node<K, V> pre;
+        final K key;
+        V value;
+
+        public Node() {
+            key = null;
+            pre = next = this;
+        }
+
+        @Override
+        public K getKey() {
+            return null;
+        }
+
+        @Override
+        public V getValue() {
+            return null;
+        }
+
+        @Override
+        public V setValue(V value) {
+            return null;
+        }
     }
 }

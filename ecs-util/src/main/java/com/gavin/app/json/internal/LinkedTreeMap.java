@@ -116,6 +116,30 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         return created;
     }
 
+    private void rebalance(Node<K, V> unbalanced, boolean insert) {
+        for (Node<K, V> node = unbalanced; node != null; node = node.parent) {
+            Node<K, V> left = node.left;
+            Node<K, V> right = node.right;
+
+            int leftHeight = left != null ? left.height : 0;
+            int rightHeight = right != null ? right.height : 0;
+            int delta = leftHeight - rightHeight;
+
+            if (delta == -2) {
+
+            } else if (delta == 2) {
+
+            } else if (delta == 0) {
+                node.height = leftHeight + 1;
+                if (insert) {
+                    break;
+                }
+            } else {
+
+            }
+        }
+    }
+
     @Override
     public Set<Entry<K, V>> entrySet() {
         return null;
@@ -183,6 +207,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         Node<K, V> next;
         Node<K, V> pre;
         final K key;
+        int height;
         V value;
 
         Node() {
@@ -197,6 +222,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             this.pre = pre;
             next.pre = this;
             pre.next = this;
+            height = 1;
         }
 
         @Override

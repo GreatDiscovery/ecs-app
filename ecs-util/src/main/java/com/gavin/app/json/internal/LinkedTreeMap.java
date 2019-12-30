@@ -16,7 +16,9 @@ import java.util.function.Function;
  */
 public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Serializable {
 
-    private static final Comparator<Comparable> NATURA_ORDER = (a, b) -> { return a.compareTo(b);};
+    private static final Comparator<Comparable> NATURA_ORDER = (a, b) -> {
+        return a.compareTo(b);
+    };
     private Comparator<? super K> comparator;
 
     final Node<K, V> header = new Node<>();
@@ -26,7 +28,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
 
 
     public LinkedTreeMap() {
-         this((Comparator<? super K>) NATURA_ORDER);
+        this((Comparator<? super K>) NATURA_ORDER);
     }
 
     public LinkedTreeMap(Comparator<? super K> comparator) {
@@ -57,8 +59,61 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     }
 
     public Node<K, V> find(K key, boolean create) {
+        Comparator<? super K> comparator = this.comparator;
+        Node<K, V> nearest = root;
+        int comparison = 0;
 
-        return null;
+        while (true) {
+            // 如果按照自然排序，需要强制转成Comparable接口，防止子类多态重写comparaTo方法
+            Comparable<Object> comparableKey = comparator == NATURA_ORDER ? (Comparable<Object>) key : null;
+            // 查找用二叉树查找
+            if (nearest != null) {
+                comparison = (comparableKey == null) ? comparator.compare(key, nearest.key) :
+                        comparableKey.compareTo(nearest.key);
+            }
+
+            if (comparison == 0) {
+                return nearest;
+            }
+
+            // 递归往下找
+            Node<K, V> child = comparison < 0 ? nearest.left : nearest.right;
+            if (child == null) {
+                break;
+            }
+
+            nearest = child;
+        }
+
+        if (!create) {
+            return null;
+        }
+
+        Node<K, V> header = this.header;
+        Node<K, V> created;
+
+        // 创建新的节点
+        if (nearest == null) {
+
+            // header这里倒着插入挺精妙的，因为正着插入需要知道上一个节点
+            created = new Node(nearest, key, header, header.pre);
+            root = created;
+        } else {
+
+            // 插入用的双向链表插入
+            created = new Node(nearest, key, header, header.pre);
+
+            if (comparison < 0) {
+                nearest.left = created;
+            } else {
+                nearest.right = created;
+            }
+            rebalance(nearest, true);
+        }
+
+        size++;
+        modCount++;
+        return created;
     }
 
     @Override
@@ -130,9 +185,18 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         final K key;
         V value;
 
-        public Node() {
+        Node() {
             key = null;
             pre = next = this;
+        }
+
+        Node(Node<K, V> parent, K key, Node<K, V> next, Node<K, V> pre) {
+            this.parent = parent;
+            this.key = key;
+            this.next = next;
+            this.pre = pre;
+            next.pre = this;
+            pre.next = this;
         }
 
         @Override

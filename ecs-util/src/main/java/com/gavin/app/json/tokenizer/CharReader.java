@@ -1,7 +1,5 @@
 package com.gavin.app.json.tokenizer;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
-
 import java.io.IOException;
 import java.io.Reader;
 

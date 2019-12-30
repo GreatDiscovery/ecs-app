@@ -19,7 +19,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     private static final Comparator<Comparable> NATURA_ORDER = (a, b) -> { return a.compareTo(b);};
     private Comparator<? super K> comparator;
 
-    final Node<K, V> head = new Node<>();
+    final Node<K, V> header = new Node<>();
     Node<K, V> root;
     int size = 0;
     int modCount = 0;
@@ -30,7 +30,35 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     }
 
     public LinkedTreeMap(Comparator<? super K> comparator) {
-        this.comparator = comparator;
+        this.comparator = comparator != null ? comparator : (Comparator<? super K>) NATURA_ORDER;
+    }
+
+    @Override
+    public int size() {
+        return size;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public V put(K key, V value) {
+        if (key == null) {
+            throw new NullPointerException("key == null");
+        }
+
+        Node<K, V> create = find(key, true);
+        // 用于返回旧值
+        V result = create.value;
+        create.value = value;
+        return result;
+    }
+
+    public Node<K, V> find(K key, boolean create) {
+
+        return null;
     }
 
     @Override

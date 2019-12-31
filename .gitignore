@@ -1,0 +1,13 @@
+ecs-util/target
+ecs-util/.classpath
+.project
+.settings
+.idea/compiler.xml
+.idea/misc.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/uiDesigner.xml
+*.factorypath
+*.DS_Store
+.idea/
+*.iml

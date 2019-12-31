@@ -95,7 +95,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         // 创建新的节点
         if (nearest == null) {
 
-            // header这里倒着插入挺精妙的，因为正着插入需要知道上一个节点
+            // 双向链表的插入
             created = new Node(nearest, key, header, header.pre);
             root = created;
         } else {
@@ -108,6 +108,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             } else {
                 nearest.right = created;
             }
+            // 树的高度是从下往上的，所以新创建的节点的高度默认为1
             rebalance(nearest, true);
         }
 
@@ -126,18 +127,59 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             int delta = leftHeight - rightHeight;
 
             if (delta == -2) {
+                Node<K, V> rightLeft = right.left;
+                Node<K, V> rightRight = right.right;
+                int rightLeftHeight = rightLeft != null ? rightLeft.height : 0;
+                int rightRightHeight = rightRight != null ? rightRight.height : 0;
+
+                int rightDelta = rightLeftHeight - rightRightHeight;
+                if (rightDelta == -1 || (rightDelta == 0 && !insert)) {
+                    rotateLeft(node);
+                } else {
+                    rotateRight(node);
+                    rotateLeft(node);
+                }
+                if (insert) {
+                    break;
+                }
 
             } else if (delta == 2) {
+                Node<K, V> leftLeft = left.left;
+                Node<K, V> leftRight = left.right;
+                int leftLeftHeight = leftLeft != null ? leftLeft.height : 0;
+                int leftRightHeight = leftRight != null ? leftRight.height : 0;
 
+                int leftDelta = leftLeftHeight - leftRightHeight;
+                if (leftDelta == 1 || (leftDelta == 0 && !insert)) {
+                    rotateRight(node);
+                } else {
+                    rotateLeft(node);
+                    rotateRight(node);
+                }
+                if (insert) {
+                    break;
+                }
             } else if (delta == 0) {
                 node.height = leftHeight + 1;
                 if (insert) {
                     break;
                 }
             } else {
-
+                if (delta == 1 || delta == -1) {
+                    node.height = Math.max(leftHeight, rightHeight) + 1;
+                }
+                if (!insert) {
+                    break;
+                }
             }
         }
+    }
+
+    private void rotateLeft(Node<K, V> node) {
+    }
+
+    private void rotateRight(Node<K, V> node) {
+
     }
 
     @Override
@@ -220,9 +262,9 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             this.key = key;
             this.next = next;
             this.pre = pre;
+            this.height = 1;
             next.pre = this;
             pre.next = this;
-            height = 1;
         }
 
         @Override

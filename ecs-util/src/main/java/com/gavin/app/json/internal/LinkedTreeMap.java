@@ -175,11 +175,63 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
-    private void rotateLeft(Node<K, V> node) {
+    private void rotateLeft(Node<K, V> root) {
+        Node<K, V> left = root.left;
+        Node<K, V> pivot = root.right;
+        Node<K, V> pivotLeft = pivot.left;
+        Node<K, V> pivotRight = pivot.right;
+
+        root.right = pivotLeft;
+        if (pivotLeft != null) {
+            pivotLeft.parent = root;
+        }
+
+        replaceInParent(root, pivot);
+
+        pivot.left = root;
+        root.parent = pivot;
+
+        root.height = Math.max(root.left != null ? root.left.height : 0,
+                root.right != null ? root.right.height : 0);
+        pivot.height = Math.max(root.height, pivot.right != null ? pivot.right.height : 0);
     }
 
-    private void rotateRight(Node<K, V> node) {
+    private void rotateRight(Node<K, V> root) {
+        Node<K, V> pivot = root.left;
+        Node<K, V> right = root.right;
+        Node<K, V> pivotLeft = pivot.left;
+        Node<K, V> pivotRight = pivot.right;
 
+        root.left = pivotRight;
+        if (pivotRight != null) {
+            pivotRight.parent = root;
+        }
+
+        replaceInParent(root, pivot);
+
+        pivot.right = root;
+        root.parent = pivot;
+
+        root.height = Math.max(right != null ? right.height : 0, root.left != null ? root.left.height : 0);
+        pivot.height = Math.max(root.height, pivotLeft != null ? pivotLeft.height : 0);
+    }
+
+    private void replaceInParent(Node<K, V> node, Node<K, V> replacement) {
+        Node<K, V> parent = node.parent;
+        node.parent = null;
+
+        if (replacement != null) {
+            replacement.parent = parent;
+        }
+        if (parent != null) {
+            if (parent.left == node) {
+                parent.left = replacement;
+            } else {
+                parent.right = replacement;
+            }
+        } else {
+            root = replacement;
+        }
     }
 
     @Override

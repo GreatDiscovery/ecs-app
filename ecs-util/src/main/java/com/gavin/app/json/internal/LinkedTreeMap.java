@@ -58,31 +58,43 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         return result;
     }
 
+    @Override
+    public V get(Object key) {
+        Node<K, V> node = findObject(key);
+        return node != null ? node.value : null;
+    }
+
+    private Node<K, V> findObject(Object key) {
+        return key != null ? find((K) key, false) : null;
+    }
+
     public Node<K, V> find(K key, boolean create) {
         Comparator<? super K> comparator = this.comparator;
         Node<K, V> nearest = root;
         int comparison = 0;
 
-        while (true) {
-            // 如果按照自然排序，需要强制转成Comparable接口，防止子类多态重写comparaTo方法
-            Comparable<Object> comparableKey = comparator == NATURA_ORDER ? (Comparable<Object>) key : null;
-            // 查找用二叉树查找
-            if (nearest != null) {
+        if (nearest != null) {
+            while (true) {
+                // 如果按照自然排序，需要强制转成Comparable接口，防止子类多态重写comparaTo方法
+                Comparable<Object> comparableKey = comparator == NATURA_ORDER ? (Comparable<Object>) key : null;
+                // 查找用二叉树查找
+
                 comparison = (comparableKey == null) ? comparator.compare(key, nearest.key) :
                         comparableKey.compareTo(nearest.key);
-            }
 
-            if (comparison == 0) {
-                return nearest;
-            }
 
-            // 递归往下找
-            Node<K, V> child = comparison < 0 ? nearest.left : nearest.right;
-            if (child == null) {
-                break;
-            }
+                if (comparison == 0) {
+                    return nearest;
+                }
 
-            nearest = child;
+                // 递归往下找
+                Node<K, V> child = comparison < 0 ? nearest.left : nearest.right;
+                if (child == null) {
+                    break;
+                }
+
+                nearest = child;
+            }
         }
 
         if (!create) {
@@ -136,7 +148,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
                 if (rightDelta == -1 || (rightDelta == 0 && !insert)) {
                     rotateLeft(node);
                 } else {
-                    rotateRight(node);
+                    rotateRight(right);
                     rotateLeft(node);
                 }
                 if (insert) {
@@ -153,7 +165,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
                 if (leftDelta == 1 || (leftDelta == 0 && !insert)) {
                     rotateRight(node);
                 } else {
-                    rotateLeft(node);
+                    rotateLeft(left);
                     rotateRight(node);
                 }
                 if (insert) {
@@ -294,7 +306,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         return null;
     }
 
-    static final class Node<K, V> implements Entry<K, V> {
+    public static final class Node<K, V> implements Entry<K, V> {
         Node<K, V> parent;
         Node<K, V> left;
         Node<K, V> right;
@@ -321,17 +333,17 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
 
         @Override
         public K getKey() {
-            return null;
+            return this.key;
         }
 
         @Override
         public V getValue() {
-            return null;
+            return this.value;
         }
 
         @Override
         public V setValue(V value) {
-            return null;
+            return this.value = value;
         }
     }
 }

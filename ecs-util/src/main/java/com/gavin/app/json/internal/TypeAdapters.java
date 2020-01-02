@@ -5,6 +5,7 @@ import com.gavin.app.json.model.JsonObject;
 import com.gavin.app.json.model.JsonPrimitive;
 
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * @author gavin
@@ -37,8 +38,20 @@ public final class TypeAdapters {
         public void write(JsonWriter out, JsonElement value) throws IOException {
             if (value.isJsonObject()) {
                 out.beginObject();
-
+                for (Map.Entry<String, JsonElement> e : value.getAsJsonObject().entrySet()) {
+                    out.name(e.getKey());
+                    write(out, e.getValue());
+                }
                 out.endObject();
+            } else if (value.isJsonPrimitive()) {
+                JsonPrimitive primitive = value.getAsJsonPrimitive();
+                if (primitive.isNumber()) {
+                    out.value(primitive.getAsNumber());
+                } else if (primitive.isBoolean()) {
+                    out.value(primitive.getAsBoolean());
+                } else {
+                    out.value(primitive.getAsString());
+                }
             }
         }
     };

@@ -240,7 +240,6 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         } else {
             root = replacement;
         }
-
     }
 
     public Node<K, V> removeInternalByKey(Object key) {

@@ -17,6 +17,25 @@ public abstract class JsonElement {
         return this instanceof JsonObject;
     }
 
+    public boolean isJsonPrimitive() {
+        return this instanceof JsonPrimitive;
+    }
+
+    public JsonObject getAsJsonObject() {
+        if (isJsonObject()) {
+            return (JsonObject) this;
+        } else {
+            throw new IllegalStateException("not a jsonObject:" + this);
+        }
+    }
+
+    public JsonPrimitive getAsJsonPrimitive() {
+        if (isJsonPrimitive()) {
+            return (JsonPrimitive) this;
+        }
+        throw new IllegalStateException("not a jsonPrimitive:" + this);
+    }
+
     @Override
     public String toString() {
         StringWriter stringWriter = new StringWriter();

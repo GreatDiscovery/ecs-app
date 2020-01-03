@@ -13,6 +13,18 @@ public class JsonPrimitive extends JsonElement {
         setValue(primitive);
     }
 
+    public boolean isNumber() {
+        return value instanceof Number;
+    }
+
+    public boolean isBoolean() {
+        return value instanceof Boolean;
+    }
+
+    public boolean isString() {
+        return value instanceof String;
+    }
+
     private void setValue(Object primitive) {
         if (isStringOrPrimitive(primitive)) {
             value = primitive;
@@ -29,5 +41,18 @@ public class JsonPrimitive extends JsonElement {
             }
         }
         return false;
+    }
+
+    public Number getAsNumber() {
+        // todo String -> Number
+        return value instanceof String ? null : (Number) value;
+    }
+
+    public Boolean getAsBoolean() {
+        return null;
+    }
+
+    public String getAsString() {
+        return (String) value;
     }
 }

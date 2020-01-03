@@ -1,28 +1,26 @@
 package com.gavin.app.json.model;
 
+import com.gavin.app.json.internal.LinkedTreeMap;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author gavin
  * @date 2019-12-23 22:35
  */
-public final class JsonObject<K, V> extends JsonElement {
-    private Map<K, V> map = new HashMap<>();
+public final class JsonObject extends JsonElement {
+    private Map<String, JsonElement> members = new LinkedTreeMap<>();
 
-    public JsonObject() {
-        this.map = new HashMap<>();
+    public void add(String key, JsonElement value) {
+        if (value == null) {
+            value = JsonNull.INSTANCE;
+        }
+        members.put(key, value);
     }
 
-    public V put(K key, V value) {
-       return map.put(key, value);
-    }
-
-    public V add(K key, V value) {
-        return this.put(key, value);
-    }
-    @Override
-    public String toString() {
-        return map.toString();
+    public Set<Map.Entry<String, JsonElement>> entrySet() {
+        return members.entrySet();
     }
 }

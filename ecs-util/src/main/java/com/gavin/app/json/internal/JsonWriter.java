@@ -14,6 +14,9 @@ public class JsonWriter implements Closeable, Flushable {
 
     private Writer out;
     private int[] stack = new int[32];
+
+    private String deferredName;
+
     int stackSize = 0;
     {
         stack[stackSize++] = JsonScope.EMPTY_DOCUMENT;
@@ -30,7 +33,15 @@ public class JsonWriter implements Closeable, Flushable {
         return open(JsonScope.EMPTY_OBJECT, "{");
     }
 
+    public void name(String key) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        deferredName = key;
+    }
+
     public JsonWriter endObject() throws IOException {
+        return end(JsonScope.CLOSED, "}");
         return null;
     }
 

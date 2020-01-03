@@ -64,6 +64,12 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         return node != null ? node.value : null;
     }
 
+    @Override
+    public V remove(Object key) {
+        Node<K, V> node = removeInternalByKey(key);
+        return node != null ? node.value : null ;
+    }
+
     private Node<K, V> findObject(Object key) {
         return key != null ? find((K) key, false) : null;
     }
@@ -78,43 +84,33 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
                 // 如果按照自然排序，需要强制转成Comparable接口，防止子类多态重写comparaTo方法
                 Comparable<Object> comparableKey = comparator == NATURA_ORDER ? (Comparable<Object>) key : null;
                 // 查找用二叉树查找
-
                 comparison = (comparableKey == null) ? comparator.compare(key, nearest.key) :
                         comparableKey.compareTo(nearest.key);
-
-
                 if (comparison == 0) {
                     return nearest;
                 }
-
                 // 递归往下找
                 Node<K, V> child = comparison < 0 ? nearest.left : nearest.right;
                 if (child == null) {
                     break;
                 }
-
                 nearest = child;
             }
         }
-
         if (!create) {
             return null;
         }
 
         Node<K, V> header = this.header;
         Node<K, V> created;
-
         // 创建新的节点
         if (nearest == null) {
-
             // 双向链表的插入
             created = new Node(nearest, key, header, header.pre);
             root = created;
         } else {
-
             // 插入用的双向链表插入
             created = new Node(nearest, key, header, header.pre);
-
             if (comparison < 0) {
                 nearest.left = created;
             } else {
@@ -243,6 +239,21 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             }
         } else {
             root = replacement;
+        }
+    }
+
+    public Node<K, V> removeInternalByKey(Object key) {
+        Node<K, V> node = findObject(key);
+        if (node != null) {
+            removeInternal(node, true);
+        }
+        return node;
+    }
+
+    public void removeInternal(Node<K, V> node, boolean unlink) {
+        if (unlink) {
+            node.pre.next = node.next;
+            node.next.pre = node.pre;
         }
     }
 

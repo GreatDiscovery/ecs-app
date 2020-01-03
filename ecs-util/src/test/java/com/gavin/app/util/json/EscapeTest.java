@@ -1,4 +1,4 @@
-package main.com.gavin.app.util.json;
+package com.gavin.app.util.json;
 
 import org.apache.commons.lang.StringEscapeUtils;
 

@@ -1,4 +1,4 @@
-package main.com.gavin.app.util.algorithm;
+package com.gavin.app.util.algorithm;
 
 import java.util.Arrays;
 

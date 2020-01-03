@@ -1,4 +1,4 @@
-package main.com.gavin.app.util.pattern;
+package com.gavin.app.util.pattern;
 
 import java.util.regex.Pattern;
 

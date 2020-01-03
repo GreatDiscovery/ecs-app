@@ -251,10 +251,28 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     }
 
     public void removeInternal(Node<K, V> node, boolean unlink) {
+        // 先解开双向链表
         if (unlink) {
             node.pre.next = node.next;
             node.next.pre = node.pre;
         }
+
+        Node<K, V> left = node.left;
+        Node<K, V> right = node.right;
+        Node<K, V> originParent = node.parent;
+
+        if (left != null && right != null) {
+            Node<K, V> adjacent = left.height > right.height ? left.last() : right.first();
+            removeInternal(adjacent, false);
+
+        } else if (left != null) {
+
+        } else if (right != null) {
+
+        } else {
+            replaceInParent(node, null);
+        }
+
     }
 
     @Override
@@ -280,11 +298,6 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     @Override
     public V putIfAbsent(K key, V value) {
         return null;
-    }
-
-    @Override
-    public boolean remove(Object key, Object value) {
-        return false;
     }
 
     @Override
@@ -355,6 +368,26 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         @Override
         public V setValue(V value) {
             return this.value = value;
+        }
+
+        private Node<K, V> last() {
+            Node<K, V> node = this;
+            Node<K, V> child = node.right;
+            while (child != null) {
+                node = child;
+                child = child.right;
+            }
+            return node;
+        }
+
+        private Node<K, V> first() {
+            Node<K, V> node = this;
+            Node<K, V> child = node.left;
+            while (child != null) {
+                node = child;
+                child = child.left;
+            }
+            return node;
         }
     }
 }

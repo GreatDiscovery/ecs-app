@@ -109,7 +109,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             created = new Node(nearest, key, header, header.pre);
             root = created;
         } else {
-            // 插入用的双向链表插入
+            // 插入用的循环双向链表插入，最后形成环，最后的节点next指向header
             created = new Node(nearest, key, header, header.pre);
             if (comparison < 0) {
                 nearest.left = created;
@@ -262,17 +262,44 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         Node<K, V> originParent = node.parent;
 
         if (left != null && right != null) {
+            // 这里按照中序遍历，找左边小于root、右边大于root的相邻节点去补上删除的节点
             Node<K, V> adjacent = left.height > right.height ? left.last() : right.first();
+            // 递归先把临近的节点给删掉，然后再去替换node节点位置
             removeInternal(adjacent, false);
 
+            int leftHeight = 0;
+            if (left != null) {
+                leftHeight = left.height;
+                adjacent.left = left;
+                left.parent = adjacent;
+                node.left = null;
+            }
+
+            int rightHeight = 0;
+            if (right != null) {
+                rightHeight = right.height;
+                adjacent.right = right;
+                right.parent = adjacent;
+                node.right = null;
+            }
+
+            adjacent.height = Math.max(leftHeight, rightHeight) + 1;
+            replaceInParent(node, adjacent);
+            return;
         } else if (left != null) {
-
+            replaceInParent(node, left);
+            node.left = null;
         } else if (right != null) {
-
+            replaceInParent(node, right);
+            node.right = null;
         } else {
             replaceInParent(node, null);
         }
 
+        // 所有remove操作都会运行以下三步
+        rebalance(originParent, false);
+        size--;
+        modCount++;
     }
 
     @Override

@@ -41,7 +41,7 @@ public abstract class JsonElement {
         StringWriter stringWriter = new StringWriter();
         JsonWriter jsonWriter = new JsonWriter(stringWriter);
         try {
-            Streams.write(this, jsonWriter);
+            Streams.write(jsonWriter, this);
         } catch (IOException e) {
             throw new IllegalStateException("打印错误");
         }

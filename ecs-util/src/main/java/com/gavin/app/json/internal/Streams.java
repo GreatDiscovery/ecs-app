@@ -23,7 +23,7 @@ public final class Streams {
         return null;
     }
 
-    public static void write(JsonElement element, JsonWriter writer) throws IOException {
+    public static void write(JsonWriter writer, JsonElement element) throws IOException {
         TypeAdapters.JSON_ELEMENT.write(writer, element);
     }
 }

@@ -20,6 +20,13 @@ public final class JsonObject extends JsonElement {
         members.put(key, value);
     }
 
+    public void put(String key, JsonElement value) {
+        if (value == null) {
+            value = JsonNull.INSTANCE;
+        }
+        members.put(key, value);
+    }
+
     public Set<Map.Entry<String, JsonElement>> entrySet() {
         return members.entrySet();
     }

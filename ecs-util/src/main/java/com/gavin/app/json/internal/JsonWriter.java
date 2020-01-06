@@ -18,12 +18,31 @@ public class JsonWriter implements Closeable, Flushable {
     private String deferredName;
 
     int stackSize = 0;
+
     {
         stack[stackSize++] = JsonScope.EMPTY_DOCUMENT;
     }
 
+    private static final String[] REPLACEMENT_CHARS;
+
+    static {
+        REPLACEMENT_CHARS = new String[128];
+        for (int i = 0; i <= 0x1f; i++) {
+            REPLACEMENT_CHARS[i] = String.format("\\u%04x", (int) i);
+        }
+        REPLACEMENT_CHARS['"'] = "\\\"";
+        REPLACEMENT_CHARS['\\'] = "\\\\";
+        REPLACEMENT_CHARS['\t'] = "\\t";
+        REPLACEMENT_CHARS['\b'] = "\\b";
+        REPLACEMENT_CHARS['\n'] = "\\n";
+        REPLACEMENT_CHARS['\r'] = "\\r";
+        REPLACEMENT_CHARS['\f'] = "\\f";
+    }
+
     // 用来作为缩进符号的，比如空白符
     private String indent;
+
+    private String separator = ":";
 
     public JsonWriter(Writer out) {
         if (out == null) {
@@ -51,7 +70,7 @@ public class JsonWriter implements Closeable, Flushable {
     }
 
     public JsonWriter endObject() throws IOException {
-        return close(JsonScope.CLOSED, "}");
+        return close(JsonScope.EMPTY_OBJECT, JsonScope.NONEMPTY_OBJECT, "}");
     }
 
     public JsonWriter open(int empty, String openBracket) throws IOException {
@@ -61,16 +80,36 @@ public class JsonWriter implements Closeable, Flushable {
         return this;
     }
 
-    public JsonWriter close(int empty, String closeBracket) {
-        return null;
+    public JsonWriter close(int empty, int notEmpty, String closeBracket) throws IOException {
+        int context = peek();
+        if (context != empty && context != notEmpty) {
+            throw new IllegalStateException("Nesting problem");
+        }
+        if (deferredName != null) {
+            throw new IllegalStateException("Dangling name " + deferredName);
+        }
+
+        stackSize--;
+        if (context == notEmpty) {
+            newLine();
+        }
+        out.write(closeBracket);
+        return this;
     }
 
-    private void beforeValue() {
+    private void beforeValue() throws IOException {
         int p = peek();
         switch (p) {
             case JsonScope.EMPTY_DOCUMENT:
                 replaceTop(JsonScope.NONEMPTY_DOCUMENT);
                 break;
+            case JsonScope.DANGLING_NAME:
+                out.write(separator);
+                replaceTop(JsonScope.NONEMPTY_OBJECT);
+                break;
+            default:
+                throw new IllegalStateException("nesting problem");
+
         }
     }
 
@@ -95,6 +134,14 @@ public class JsonWriter implements Closeable, Flushable {
         replaceTop(JsonScope.DANGLING_NAME);
     }
 
+    private void string(String value) throws IOException {
+        String[] replacements = REPLACEMENT_CHARS;
+        out.write('\"');
+        // 写的时候需要考虑转义的问题
+        out.write(value);
+        out.write('\"');
+    }
+
     private void newLine() throws IOException {
         // 如果不需要缩进的话，换行也就没有必要了
         if (indent == null) return;
@@ -111,10 +158,10 @@ public class JsonWriter implements Closeable, Flushable {
     }
 
     private int peek() {
-       if (stackSize == 0) {
-           throw new IllegalStateException("JsonWriter is closed.");
-       }
-       return stack[stackSize - 1];
+        if (stackSize == 0) {
+            throw new IllegalStateException("JsonWriter is closed.");
+        }
+        return stack[stackSize - 1];
     }
 
     private void push(int newTop) {
@@ -148,7 +195,7 @@ public class JsonWriter implements Closeable, Flushable {
 
     public JsonWriter value(String value) throws IOException {
         if (value == null) {
-           return null;
+            return null;
         }
 
         writeDeferredName();

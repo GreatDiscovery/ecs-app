@@ -1,12 +1,8 @@
 package com.gavin.app.json.internal;
 
+
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.Comparator;
-import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import java.util.*;
 
 /**
  * 按照插入顺序进行迭代的map，区别于TreeMap使用比较序
@@ -67,7 +63,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
     @Override
     public V remove(Object key) {
         Node<K, V> node = removeInternalByKey(key);
-        return node != null ? node.value : null ;
+        return node != null ? node.value : null;
     }
 
     private Node<K, V> findObject(Object key) {
@@ -307,56 +303,6 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         return null;
     }
 
-    @Override
-    public V getOrDefault(Object key, V defaultValue) {
-        return null;
-    }
-
-    @Override
-    public void forEach(BiConsumer<? super K, ? super V> action) {
-
-    }
-
-    @Override
-    public void replaceAll(BiFunction<? super K, ? super V, ? extends V> function) {
-
-    }
-
-    @Override
-    public V putIfAbsent(K key, V value) {
-        return null;
-    }
-
-    @Override
-    public boolean replace(K key, V oldValue, V newValue) {
-        return false;
-    }
-
-    @Override
-    public V replace(K key, V value) {
-        return null;
-    }
-
-    @Override
-    public V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction) {
-        return null;
-    }
-
-    @Override
-    public V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-        return null;
-    }
-
-    @Override
-    public V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
-        return null;
-    }
-
-    @Override
-    public V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
-        return null;
-    }
-
     public static final class Node<K, V> implements Entry<K, V> {
         Node<K, V> parent;
         Node<K, V> left;
@@ -415,6 +361,30 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
                 child = child.left;
             }
             return node;
+        }
+    }
+
+    private abstract class LinkedTreeMapIterator<T> implements Iterator<T> {
+        Node<K, V> next = header.next;
+        // 记录上一次返回的节点
+        Node<K, V> lastReturned = null;
+        int expectedModCount = modCount;
+
+        @Override
+        public boolean hasNext() {
+            return next != header;
+        }
+
+        public Node<K, V> nextNode() {
+            Node<K, V> e = next;
+            if (e == header) {
+                throw new NoSuchElementException();
+            }
+            if (expectedModCount != modCount) {
+                throw new ConcurrentModificationException();
+            }
+            next = e.next;
+            return lastReturned = e;
         }
     }
 }

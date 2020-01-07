@@ -298,9 +298,12 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         modCount++;
     }
 
+    private EntrySet entrySet;
+
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return null;
+        EntrySet result = entrySet;
+        return result != null ? result : new EntrySet();
     }
 
     public static final class Node<K, V> implements Entry<K, V> {
@@ -364,6 +367,7 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
         }
     }
 
+    // 迭代器一般是私有的，只允许自己访问自己的变量
     private abstract class LinkedTreeMapIterator<T> implements Iterator<T> {
         Node<K, V> next = header.next;
         // 记录上一次返回的节点
@@ -385,6 +389,23 @@ public final class LinkedTreeMap<K, V> extends AbstractMap<K, V> implements Seri
             }
             next = e.next;
             return lastReturned = e;
+        }
+    }
+
+    class EntrySet extends AbstractSet<Entry<K, V>> {
+        @Override
+        public Iterator<Entry<K, V>> iterator() {
+            return new LinkedTreeMapIterator<Entry<K, V>>() {
+                @Override
+                public Entry<K, V> next() {
+                    return nextNode();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            return size;
         }
     }
 }

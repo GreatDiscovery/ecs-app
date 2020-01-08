@@ -47,4 +47,16 @@ public abstract class JsonElement {
         }
         return stringWriter.toString();
     }
+
+    public String prettyPrint() {
+        StringWriter stringWriter = new StringWriter();
+        JsonWriter jsonWriter = new JsonWriter(stringWriter);
+        jsonWriter.setIndent(" ");
+        try {
+            Streams.write(jsonWriter, this);
+        } catch (IOException e) {
+            throw new IllegalStateException("打印错误");
+        }
+        return stringWriter.toString();
+    }
 }

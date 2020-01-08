@@ -51,6 +51,16 @@ public class JsonWriter implements Closeable, Flushable {
         this.out = out;
     }
 
+    public final void setIndent(String indent) {
+        if (indent.length() == 0) {
+            this.indent = null;
+            separator = ":";
+        } else {
+            this.indent = indent;
+            separator = ":";
+        }
+    }
+
     public JsonWriter beginObject() throws IOException {
         return open(JsonScope.EMPTY_OBJECT, "{");
     }

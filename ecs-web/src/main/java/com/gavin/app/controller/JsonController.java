@@ -2,11 +2,14 @@ package com.gavin.app.controller;
 
 import com.gavin.app.json.model.JsonElement;
 import com.gavin.app.json.parser.JsonParser;
+import com.gavin.app.service.LiteralService;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -16,9 +19,12 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 2019-12-17 22:26
  */
 
-@Controller
+@RestController
 @RequestMapping("/util")
 public class JsonController {
+
+    @Autowired
+    private LiteralService literalService;
 
     @RequestMapping("/con")
     public String connect() {
@@ -36,23 +42,15 @@ public class JsonController {
     }
 
     @RequestMapping("/escape")
-    public String escapeString(ModelAndView modelAndView) {
-        String str = (String) modelAndView.getModel().get("unescapedString");
-        if (StringUtils.isEmpty(str)) {
+    public String escapeString(String unescaped) {
+        if (StringUtils.isEmpty(unescaped)) {
             return "";
         }
-        str = StringEscapeUtils.escapeJava(str);
-        return str;
+        return StringEscapeUtils.escapeJava(unescaped);
     }
 
     @RequestMapping("parse")
-    public String parse(String json) {
-        if (StringUtils.isEmpty(json)) {
-            return "";
-        }
-
-        JsonParser jsonParser = new JsonParser();
-        JsonElement o = jsonParser.parse(json);
-        return o.toString();
+    public String parse(String unformat) {
+        return literalService.parseJson(unformat);
     }
 }

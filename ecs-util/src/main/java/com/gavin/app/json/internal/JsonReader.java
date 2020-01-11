@@ -86,6 +86,8 @@ public class JsonReader implements Closeable {
                 return JsonToken.BEGIN_OBJECT;
             case PEEKED_DOUBLE_QUOTED:
                 return JsonToken.STRING;
+            case PEEKED_BEGIN_ARRAY:
+                return JsonToken.BEGIN_ARRAY;
         }
         return null;
     }
@@ -128,16 +130,44 @@ public class JsonReader implements Closeable {
                     break;
             }
 
+        } else if (peekStack == JsonScope.EMPTY_ARRAY ) {
+            stack[stackSize - 1] = JsonScope.NONEMPTY_ARRAY;
+        } else if (peekStack == JsonScope.NONEMPTY_ARRAY) {
+
         }
 
         int c = nextNonWhitespace(true);
         switch (c) {
             case '{':
                 return peeked = PEEKED_BEGIN_OBJECT;
+            case '}':
+                return peeked = PEEKED_END_OBJECT;
+            case '[':
+                return peeked = PEEKED_BEGIN_ARRAY;
+            case ']':
+                return peeked = PEEKED_END_ARRAY;
             case '"':
                 return peeked = PEEKED_DOUBLE_QUOTED;
+            default:
+                // 说明读取不到特殊符号，读到的是一个字面量
+                pos--;
         }
+
+        int result = peekKeyword();
+        if (result != PEEKED_NONE) {
+            return result;
+        }
+
+        result = peekNumber();
+        if (result != PEEKED_NONE) {
+            return result;
+        }
+
         return -1;
+    }
+
+    private int peekKeyword() {
+
     }
 
     private int nextNonWhitespace(boolean throwOnEof) throws IOException {
@@ -269,6 +299,35 @@ public class JsonReader implements Closeable {
             throw new IllegalStateException("Expected END_OBJECT but was " + peek()
                     + " at line " + getLineNumber() + " column " + getLineColumn());
         }
+    }
+
+    public void beginArray() throws IOException {
+        int p = peeked;
+        if (p == PEEKED_NONE) {
+            doPeek();
+        }
+
+        if (p == PEEKED_BEGIN_ARRAY) {
+            push(JsonScope.EMPTY_ARRAY);
+            peeked = PEEKED_NONE;
+        } else {
+            throw new IllegalStateException("Expected BEGIN_ARRAY but was " + peek() +
+                    " at line " + getLineNumber() + " at column " + getLineColumn());
+        }
+    }
+
+    public void endArray() throws IOException {
+        int p = peeked;
+        if (p == PEEKED_NONE) {
+            doPeek();
+        }
+
+        if (p == PEEKED_END_ARRAY) {
+            stackSize--;
+            peeked = PEEKED_NONE;
+        } else {
+            throw new IllegalStateException("Expected END_ARRAY but was " + peek()
+                    + " at line " + getLineNumber() + " column " + getLineColumn());        }
     }
 
     public boolean hasNext() throws IOException {

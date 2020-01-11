@@ -1,5 +1,6 @@
 package com.gavin.app.json.internal;
 
+import com.gavin.app.json.model.JsonArray;
 import com.gavin.app.json.model.JsonElement;
 import com.gavin.app.json.model.JsonObject;
 import com.gavin.app.json.model.JsonPrimitive;
@@ -28,6 +29,14 @@ public final class TypeAdapters {
                     }
                     in.endObject();
                     return jsonObject;
+                case BEGIN_ARRAY:
+                    JsonArray jsonArray = new JsonArray();
+                    in.beginArray();
+                    while (in.hasNext()) {
+                        jsonArray.add(read(in));
+                    }
+                    in.endArray();
+                    return jsonArray;
                 case STRING:
                     return new JsonPrimitive(in.nextString());
             }

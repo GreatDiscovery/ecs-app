@@ -8,9 +8,16 @@ import java.util.List;
  * @date 2019-12-23 22:35
  */
 public final class JsonArray extends JsonElement {
-    private List<Object> list;
+    private List<JsonElement> elements;
 
     public JsonArray() {
-        list = new ArrayList<>();
+        elements = new ArrayList<>();
+    }
+
+    public void add(JsonElement e) {
+        if (e == null) {
+            e = JsonNull.INSTANCE;
+        }
+        elements.add(e);
     }
 }

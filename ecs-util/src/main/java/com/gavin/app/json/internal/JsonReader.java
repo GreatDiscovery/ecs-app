@@ -158,16 +158,80 @@ public class JsonReader implements Closeable {
             return result;
         }
 
-        result = peekNumber();
-        if (result != PEEKED_NONE) {
-            return result;
-        }
+//        result = peekNumber();
+//        if (result != PEEKED_NONE) {
+//            return result;
+//        }
 
         return -1;
     }
 
-    private int peekKeyword() {
+    // 判断true、false、null
+    private int peekKeyword() throws IOException {
+        char c = buffer[pos];
+        String keyword;
+        String keywordUpper;
+        int peeking;
 
+        if (c == 't' || c == 'T') {
+            keyword = "true";
+            keywordUpper = "TRUE";
+            peeking = PEEKED_TRUE;
+        } else if (c == 'f' || c == 'F') {
+            keyword = "false";
+            keywordUpper = "FALSE";
+            peeking = PEEKED_FALSE;
+        } else if (c == 'n' || c == 'N') {
+            keyword = "null";
+            keywordUpper = "NULL";
+            peeking = PEEKED_NULL;
+        } else {
+            return PEEKED_NONE;
+        }
+
+        // 验证是否是期望的值，继续往下比较
+        int length = keyword.length();
+        for (int i = 1; i < length; i++) {
+            if (pos + i >= limit && !fill(i + 1)) {
+                return PEEKED_NONE;
+            }
+            c = buffer[i];
+            if (c != keyword.charAt(i) && c != keywordUpper.charAt(i)) {
+                return PEEKED_NONE;
+            }
+        }
+
+        // 严格规定格式true等，不允许出现trues等多余的字面量
+        if ((pos + length < limit || fill(length + 1)) &&
+                isLiteral(c)) {
+            return PEEKED_NONE;
+        }
+
+        pos += length;
+        return peeked = peeking;
+    }
+
+    private boolean isLiteral(char c) {
+        switch (c) {
+            case '{':
+            case '}':
+            case '[':
+            case ']':
+            case '=':
+            case '\\':
+            case ' ':
+            case ':':
+            case ',':
+            case '\t':
+            case '\n':
+            case '\r':
+            case '\f':
+            case '/':
+            case '#':
+                return false;
+            default:
+                return true;
+        }
     }
 
     private int nextNonWhitespace(boolean throwOnEof) throws IOException {

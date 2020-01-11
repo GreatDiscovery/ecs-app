@@ -1,5 +1,7 @@
 package com.gavin.app.controller;
 
+import com.gavin.app.json.model.JsonElement;
+import com.gavin.app.json.parser.JsonParser;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +19,11 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 @RequestMapping("/util")
 public class JsonController {
+
+    @RequestMapping("/con")
+    public String connect() {
+        return "connection";
+    }
 
     @RequestMapping("/index")
     public String hello() {
@@ -36,5 +43,16 @@ public class JsonController {
         }
         str = StringEscapeUtils.escapeJava(str);
         return str;
+    }
+
+    @RequestMapping("parse")
+    public String parse(String json) {
+        if (StringUtils.isEmpty(json)) {
+            return "";
+        }
+
+        JsonParser jsonParser = new JsonParser();
+        JsonElement o = jsonParser.parse(json);
+        return o.toString();
     }
 }

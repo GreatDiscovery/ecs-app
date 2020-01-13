@@ -1,5 +1,7 @@
 package com.gavin.app.json.internal;
 
+import com.gavin.app.json.exception.JsonParseException;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
@@ -96,10 +98,16 @@ public class JsonReader implements Closeable {
         switch (p) {
             case PEEKED_BEGIN_OBJECT:
                 return JsonToken.BEGIN_OBJECT;
+            case PEEKED_SINGLE_QUOTED:
+            case PEEKED_UNQUOTED:
             case PEEKED_DOUBLE_QUOTED:
                 return JsonToken.STRING;
             case PEEKED_BEGIN_ARRAY:
                 return JsonToken.BEGIN_ARRAY;
+            case PEEKED_LONG:
+            case PEEKED_NUMBER:
+                return JsonToken.NUMBER;
+
         }
         return null;
     }
@@ -175,7 +183,11 @@ public class JsonReader implements Closeable {
             return result;
         }
 
-        return -1;
+        if (!isLiteral(buffer[pos])) {
+            throw new JsonParseException("Expected value");
+        }
+
+        return peeked = PEEKED_UNQUOTED;
     }
 
     // 判断true、false、null
@@ -315,7 +327,7 @@ public class JsonReader implements Closeable {
                         return PEEKED_NONE;
                     }
                     if (last == NUMBER_CHAR_SIGN || last == NUMBER_CHAR_NONE) {
-                        value = - (c - '0');
+                        value = -(c - '0');
                         last = NUMBER_CHAR_DIGIT;
                     } else if (last == NUMBER_CHAR_DIGIT) {
                         // 不允许出现001这种数
@@ -396,18 +408,36 @@ public class JsonReader implements Closeable {
     public String nextString() throws IOException {
         int p = peeked;
         if (p == PEEKED_NONE) {
-            doPeek();
+            p = doPeek();
         }
 
         String result = "";
         if (p == PEEKED_DOUBLE_QUOTED) {
             result = nextQuotedValue('"');
+        } else if (p == PEEKED_SINGLE_QUOTED) {
+            result = nextQuotedValue('\'');
         } else {
             throw new IllegalStateException("Expected a string but was " + peek() + locationString());
         }
 
         peeked = PEEKED_NONE;
         return result;
+    }
+
+    public Boolean nextBoolean() throws IOException {
+        int p = peeked;
+        if (p == PEEKED_NONE) {
+            p = doPeek();
+        }
+
+        if (p == PEEKED_TRUE ) {
+            peeked = PEEKED_NONE;
+            return true;
+        } else if (p == PEEKED_FALSE) {
+            peeked = PEEKED_NONE;
+            return false;
+        }
+        throw new IllegalStateException("Expected a boolean but was a " + peek() + locationString());
     }
 
     private boolean fill(int minium) throws IOException {
@@ -445,7 +475,7 @@ public class JsonReader implements Closeable {
     private String locationString() {
         int line = lineNumber + 1;
         int column = pos - lineStart + 1;
-        return "at line " + line + "at column " + column;
+        return " at line " + line + "at column " + column;
     }
 
     public void beginObject() throws IOException {

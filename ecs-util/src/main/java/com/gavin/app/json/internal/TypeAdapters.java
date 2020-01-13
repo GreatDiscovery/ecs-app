@@ -39,6 +39,11 @@ public final class TypeAdapters {
                     return jsonArray;
                 case STRING:
                     return new JsonPrimitive(in.nextString());
+                case NUMBER:
+                    String number = in.nextString();
+                    return new JsonPrimitive(new LazilyParsedNumber(number));
+                case BOOLEAN:
+                    return new JsonPrimitive(in.nextBoolean());
             }
             return null;
         }

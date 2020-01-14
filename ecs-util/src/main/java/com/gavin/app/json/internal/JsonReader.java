@@ -416,10 +416,16 @@ public class JsonReader implements Closeable {
             result = nextQuotedValue('"');
         } else if (p == PEEKED_SINGLE_QUOTED) {
             result = nextQuotedValue('\'');
-        } else {
+        } else if (p == PEEKED_UNQUOTED) {
+            result = nextUnquotedValue();
+        } else if (p == PEEKED_LONG) {
+            result = Long.toString(peekedLong);
+        } else if (p == PEEKED_NUMBER) {
+            // string很像IO流处理方式
+            result = new String(buffer, pos, peekedNumberLength);
+        } else{
             throw new IllegalStateException("Expected a string but was " + peek() + locationString());
         }
-
         peeked = PEEKED_NONE;
         return result;
     }
@@ -596,6 +602,11 @@ public class JsonReader implements Closeable {
                 throw new IOException("填充失败");
             }
         }
+    }
+
+    // 按照字面量进行读取
+    private String nextUnquotedValue() throws IOException {
+       return null;
     }
 
     private char readEscapeCharacter() throws IOException {

@@ -8,7 +8,9 @@ import org.junit.Assert;
  */
 public class JsonPrimitiveTest {
     public static void main(String[] args) {
-        Assert.assertTrue(A.class.isAssignableFrom(B.class));
+//        Assert.assertTrue(A.class.isAssignableFrom(B.class));
+        Assert.assertTrue(long.class.isAssignableFrom(long.class));
+        System.out.println(Integer.class);
     }
 
     class A {

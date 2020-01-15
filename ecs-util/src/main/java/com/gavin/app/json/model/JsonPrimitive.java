@@ -1,5 +1,7 @@
 package com.gavin.app.json.model;
 
+import com.gavin.app.json.internal.LazilyParsedNumber;
+
 /**
  * @author gavin
  * @date 2019-12-28 21:25
@@ -44,8 +46,7 @@ public class JsonPrimitive extends JsonElement {
     }
 
     public Number getAsNumber() {
-        // todo String -> Number
-        return value instanceof String ? null : (Number) value;
+        return value instanceof String ? new LazilyParsedNumber((String) value) : (Number) value;
     }
 
     public Boolean getAsBoolean() {
@@ -53,6 +54,12 @@ public class JsonPrimitive extends JsonElement {
     }
 
     public String getAsString() {
-        return (String) value;
+        if (isNumber()) {
+            return getAsNumber().toString();
+        } else if (isBoolean()) {
+            return getAsBoolean().toString();
+        } else {
+            return (String) value;
+        }
     }
 }

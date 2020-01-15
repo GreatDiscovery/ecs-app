@@ -18,7 +18,7 @@ public final class Streams {
             isEmpty = false;
             return TypeAdapters.JSON_ELEMENT.read(reader);
         } catch (Exception e) {
-
+            System.out.println(e.getMessage());
         }
         return null;
     }

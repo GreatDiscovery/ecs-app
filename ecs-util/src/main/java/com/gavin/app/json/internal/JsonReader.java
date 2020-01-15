@@ -331,7 +331,7 @@ public class JsonReader implements Closeable {
                         last = NUMBER_CHAR_DIGIT;
                     } else if (last == NUMBER_CHAR_DIGIT) {
                         // 不允许出现001这种数
-                        if (c == '0') {
+                        if (value == 0) {
                             return PEEKED_NONE;
                         }
                         long newValue = value * 10 - (c - '0');

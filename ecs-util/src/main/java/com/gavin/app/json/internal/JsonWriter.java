@@ -145,10 +145,29 @@ public class JsonWriter implements Closeable, Flushable {
     }
 
     private void string(String value) throws IOException {
+        // todo 可以考虑下HTML安全的转义
         String[] replacements = REPLACEMENT_CHARS;
         out.write('\"');
-        // 写的时候需要考虑转义的问题
-        out.write(value);
+        // 对于转义问题，代码总是习惯用一个局部变量把字符串分开写
+        int last = 0;
+        int length = value.length();
+        char c;
+        for (int i = 0; i < length; i++) {
+            c = value.charAt(i);
+            String replacement;
+            if (c < 128) {
+               replacement = REPLACEMENT_CHARS[c];
+               if (replacement == null) {
+                    continue;
+               }
+               out.write(value, last, i - last);
+               out.write(replacement);
+               last = i + 1;
+            }
+        }
+        if (last < length) {
+            out.write(value, last, length - last);
+        }
         out.write('\"');
     }
 

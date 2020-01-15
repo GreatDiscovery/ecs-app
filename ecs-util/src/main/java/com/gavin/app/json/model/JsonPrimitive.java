@@ -50,7 +50,10 @@ public class JsonPrimitive extends JsonElement {
     }
 
     public Boolean getAsBoolean() {
-        return null;
+        if (isBoolean()) {
+            return (Boolean) value;
+        }
+        return Boolean.parseBoolean(getAsString());
     }
 
     public String getAsString() {

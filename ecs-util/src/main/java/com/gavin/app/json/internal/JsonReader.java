@@ -336,6 +336,7 @@ public class JsonReader implements Closeable {
                         }
                         long newValue = value * 10 - (c - '0');
                         fitsInLong &= value > MIN_INCOMPLETE_INTEGER || (value == MIN_INCOMPLETE_INTEGER && newValue < value);
+                        value = newValue;
                     } else if (last == NUMBER_CHAR_DECIMAL) {
                         last = NUMBER_CHAR_FRACTION_DIGIT;
                     } else if (last == NUMBER_CHAR_EXP_E || last == NUMBER_CHAR_EXP_SIGN) {

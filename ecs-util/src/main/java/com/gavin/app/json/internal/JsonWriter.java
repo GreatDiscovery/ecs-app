@@ -12,17 +12,6 @@ import java.io.Writer;
  */
 public class JsonWriter implements Closeable, Flushable {
 
-    private Writer out;
-    private int[] stack = new int[32];
-
-    private String deferredName;
-
-    int stackSize = 0;
-
-    {
-        stack[stackSize++] = JsonScope.EMPTY_DOCUMENT;
-    }
-
     private static final String[] REPLACEMENT_CHARS;
 
     static {
@@ -39,10 +28,24 @@ public class JsonWriter implements Closeable, Flushable {
         REPLACEMENT_CHARS['\f'] = "\\f";
     }
 
+    private Writer out;
+
+    private int[] stack = new int[32];
+
+    private String deferredName;
+
+    int stackSize = 0;
+
+    {
+        stack[stackSize++] = JsonScope.EMPTY_DOCUMENT;
+    }
+
     // 用来作为缩进符号的，比如空白符
     private String indent;
 
     private String separator = ":";
+
+    private boolean serializeNulls = true;
 
     public JsonWriter(Writer out) {
         if (out == null) {
@@ -59,6 +62,10 @@ public class JsonWriter implements Closeable, Flushable {
             this.indent = indent;
             separator = ":";
         }
+    }
+
+    public void setSerializeNulls(boolean serializeNulls) {
+        this.serializeNulls = serializeNulls;
     }
 
     public JsonWriter beginObject() throws IOException {
@@ -224,7 +231,7 @@ public class JsonWriter implements Closeable, Flushable {
 
     public JsonWriter value(String value) throws IOException {
         if (value == null) {
-            return null;
+            return nullValue();
         }
 
         writeDeferredName();
@@ -233,11 +240,37 @@ public class JsonWriter implements Closeable, Flushable {
         return this;
     }
 
-    public void value(Boolean value) {
-
+    public JsonWriter value(Boolean value) throws IOException {
+        if (value == null) {
+            return nullValue();
+        }
+        return null;
     }
 
-    public void value(Number value) {
+    public JsonWriter value(Number value) throws IOException {
+        if (value == null) {
+            return nullValue();
+        }
 
+        writeDeferredName();
+        beforeValue();
+        String string = value.toString();
+        out.write(string);
+        return this;
+    }
+
+    private JsonWriter nullValue() throws IOException {
+        if (deferredName != null) {
+            if (serializeNulls) {
+                writeDeferredName();
+            } else {
+                // name为null，直接跳过该kv
+                deferredName = null;
+                return this;
+            }
+        }
+        beforeValue();
+        out.write("null");
+        return this;
     }
 }

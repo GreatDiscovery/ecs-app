@@ -28,7 +28,8 @@ public class JsonPrimitive extends JsonElement {
     }
 
     private void setValue(Object primitive) {
-        if (isStringOrPrimitive(primitive)) {
+        // 这里primitive可能是LazilyParsedNumber
+        if (isStringOrPrimitive(primitive) || primitive instanceof Number) {
             value = primitive;
         }
     }

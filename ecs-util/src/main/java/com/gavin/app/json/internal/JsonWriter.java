@@ -45,6 +45,7 @@ public class JsonWriter implements Closeable, Flushable {
 
     private String separator = ":";
 
+    // 对于null的kv是否直接忽略掉
     private boolean serializeNulls = true;
 
     public JsonWriter(Writer out) {
@@ -69,6 +70,7 @@ public class JsonWriter implements Closeable, Flushable {
     }
 
     public JsonWriter beginObject() throws IOException {
+        writeDeferredName();
         return open(JsonScope.EMPTY_OBJECT, "{");
     }
 

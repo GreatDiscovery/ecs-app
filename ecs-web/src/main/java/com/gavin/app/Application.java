@@ -1,7 +1,9 @@
 package com.gavin.app;
 
+import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author gavin
@@ -9,7 +11,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class Application {
+    @Bean
+    public ExitCodeGenerator exitCodeGenerator() {
+        // 返回的调用状态码，比如0成功，1失败等
+        return () -> 42;
+    }
     public static void main(String[] args) {
-        SpringApplication.run(Application.class);
+        System.exit(SpringApplication.exit(SpringApplication.run(Application.class)));
     }
 }

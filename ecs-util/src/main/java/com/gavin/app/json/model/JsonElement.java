@@ -21,6 +21,10 @@ public abstract class JsonElement {
         return this instanceof JsonPrimitive;
     }
 
+    public boolean isJsonArray() {
+        return this instanceof JsonArray;
+    }
+
     public JsonObject getAsJsonObject() {
         if (isJsonObject()) {
             return (JsonObject) this;
@@ -34,6 +38,13 @@ public abstract class JsonElement {
             return (JsonPrimitive) this;
         }
         throw new IllegalStateException("not a jsonPrimitive:" + this);
+    }
+
+    public JsonArray getAsJsonArray() {
+        if (isJsonArray()) {
+            return (JsonArray) this;
+        }
+        throw new IllegalStateException("not a jsonArray:" + this);
     }
 
     @Override

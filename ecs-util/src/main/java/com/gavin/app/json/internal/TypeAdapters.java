@@ -66,6 +66,12 @@ public final class TypeAdapters {
                 } else {
                     out.value(primitive.getAsString());
                 }
+            } else if (value.isJsonArray()) {
+//                out.beginArray();
+                for (JsonElement e : value.getAsJsonArray()) {
+                    write(out, e);
+                }
+//                out.endArray();
             }
         }
     };

@@ -104,10 +104,11 @@ public class JsonReader implements Closeable {
                 return JsonToken.STRING;
             case PEEKED_BEGIN_ARRAY:
                 return JsonToken.BEGIN_ARRAY;
+            case PEEKED_END_ARRAY:
+                return JsonToken.END_ARRAY;
             case PEEKED_LONG:
             case PEEKED_NUMBER:
                 return JsonToken.NUMBER;
-
         }
         return null;
     }
@@ -153,7 +154,13 @@ public class JsonReader implements Closeable {
         } else if (peekStack == JsonScope.EMPTY_ARRAY) {
             stack[stackSize - 1] = JsonScope.NONEMPTY_ARRAY;
         } else if (peekStack == JsonScope.NONEMPTY_ARRAY) {
-
+            int c = nextNonWhitespace(true);
+            switch (c) {
+                case ',':
+                    break;
+                case ']':
+                    return peeked = PEEKED_END_ARRAY;
+            }
         }
 
         int c = nextNonWhitespace(true);

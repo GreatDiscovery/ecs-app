@@ -29,6 +29,6 @@ class GJsonParse {
         String json = "{\"age\":2.5}";
         JsonParser jsonParser = new JsonParser();
         JsonElement o = jsonParser.parse(json);
-//        System.out.println(o.prettyPrint());
+        System.out.println(o.prettyPrint());
     }
 }

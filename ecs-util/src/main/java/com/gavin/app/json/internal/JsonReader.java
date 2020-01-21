@@ -431,7 +431,8 @@ public class JsonReader implements Closeable {
         } else if (p == PEEKED_NUMBER) {
             // string很像IO流处理方式
             result = new String(buffer, pos, peekedNumberLength);
-        } else{
+            pos += peekedNumberLength;
+        } else {
             throw new IllegalStateException("Expected a string but was " + peek() + locationString());
         }
         peeked = PEEKED_NONE;
@@ -444,7 +445,7 @@ public class JsonReader implements Closeable {
             p = doPeek();
         }
 
-        if (p == PEEKED_TRUE ) {
+        if (p == PEEKED_TRUE) {
             peeked = PEEKED_NONE;
             return true;
         } else if (p == PEEKED_FALSE) {
@@ -614,7 +615,7 @@ public class JsonReader implements Closeable {
 
     // 按照字面量进行读取
     private String nextUnquotedValue() throws IOException {
-       return null;
+        return null;
     }
 
     private char readEscapeCharacter() throws IOException {

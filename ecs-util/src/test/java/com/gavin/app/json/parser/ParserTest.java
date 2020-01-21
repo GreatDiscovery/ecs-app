@@ -26,9 +26,9 @@ public class ParserTest {
 
 class GJsonParse {
     public static void main(String[] args) {
-        String json = "{\"name\":[\"gavin\", \"sbw\"]}";
+        String json = "{\"age\":2.5}";
         JsonParser jsonParser = new JsonParser();
         JsonElement o = jsonParser.parse(json);
-        System.out.println(o.prettyPrint());
+//        System.out.println(o.prettyPrint());
     }
 }

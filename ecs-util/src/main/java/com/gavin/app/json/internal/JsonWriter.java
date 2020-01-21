@@ -74,6 +74,15 @@ public class JsonWriter implements Closeable, Flushable {
         return open(JsonScope.EMPTY_OBJECT, "{");
     }
 
+    public JsonWriter beginArray() throws IOException {
+        writeDeferredName();
+        return open(JsonScope.EMPTY_ARRAY, "[");
+    }
+
+    public JsonWriter endArray() throws IOException {
+        return closeArray(JsonScope.EMPTY_ARRAY, JsonScope.NONEMPTY_ARRAY, "]");
+    }
+
     public JsonWriter name(String name) {
         if (name == null) {
             throw new NullPointerException("name == null");
@@ -96,6 +105,20 @@ public class JsonWriter implements Closeable, Flushable {
         beforeValue();
         push(empty);
         out.write(openBracket);
+        return this;
+    }
+
+    public JsonWriter closeArray(int empty, int notEmpty, String closeBracket) throws IOException {
+        int context = peek();
+        if (context != empty && context != notEmpty) {
+            throw new IllegalStateException("Nesting problem");
+        }
+        if (deferredName != null) {
+            throw new IllegalStateException("Dangling name " + deferredName);
+        }
+
+        stackSize--;
+        out.write(closeBracket);
         return this;
     }
 
@@ -126,8 +149,15 @@ public class JsonWriter implements Closeable, Flushable {
                 out.write(separator);
                 replaceTop(JsonScope.NONEMPTY_OBJECT);
                 break;
+            case JsonScope.EMPTY_ARRAY:
+                replaceTop(JsonScope.NONEMPTY_ARRAY);
+//                newLine();
+                break;
+            case JsonScope.NONEMPTY_ARRAY:
+                out.write(",");
+                break;
             default:
-                throw new IllegalStateException("nesting problem");
+                throw new IllegalStateException("nesting problem, expected peeked=" + p);
 
         }
     }

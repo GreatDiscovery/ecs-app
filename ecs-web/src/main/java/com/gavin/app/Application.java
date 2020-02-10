@@ -17,6 +17,7 @@ public class Application {
         return () -> 42;
     }
     public static void main(String[] args) {
-        System.exit(SpringApplication.exit(SpringApplication.run(Application.class)));
+//        System.exit(SpringApplication.exit(SpringApplication.run(Application.class)));
+        SpringApplication.run(Application.class);
     }
 }

@@ -43,21 +43,13 @@ public class JsonController {
     @Autowired
     private LiteralService literalService;
 
+    @ApiOperation(value = "测试连通性", httpMethod = "GET")
     @RequestMapping("/con")
     public String connect() {
         return "connection";
     }
 
-    @RequestMapping("/index")
-    public String hello() {
-        return "index";
-    }
-
-    @RequestMapping("format")
-    public String formatJson(Model model) {
-        return "";
-    }
-
+    @ApiOperation(value = "转义", httpMethod = "GET")
     @RequestMapping("/escape")
     public String escapeString(String unescaped) {
         if (StringUtils.isEmpty(unescaped)) {
@@ -66,7 +58,16 @@ public class JsonController {
         return StringEscapeUtils.escapeJava(unescaped);
     }
 
-    @ApiOperation("json格式化")
+    @ApiOperation(value = "去除转义", httpMethod = "GET")
+    @RequestMapping("/unescape")
+    public String unEscapeString(String unescaped) {
+        if (StringUtils.isEmpty(unescaped)) {
+            return "";
+        }
+        return StringEscapeUtils.unescapeJava(unescaped);
+    }
+
+    @ApiOperation(value = "json格式化", httpMethod = "GET")
     @RequestMapping("parse")
     public String parse(String unformat) {
         return literalService.parseJson(unformat);

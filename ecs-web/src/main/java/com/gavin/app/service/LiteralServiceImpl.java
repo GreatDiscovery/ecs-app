@@ -20,6 +20,6 @@ public class LiteralServiceImpl implements LiteralService {
         String escaped = StringEscapeUtils.unescapeJava(unformat);
         JsonParser jsonParser = new JsonParser();
         JsonElement o = jsonParser.parse(escaped);
-        return o.toString();
+        return o.prettyPrint();
     }
 }

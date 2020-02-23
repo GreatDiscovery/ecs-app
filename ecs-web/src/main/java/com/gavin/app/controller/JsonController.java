@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Api(tags = "JsonController", description = "json处理")
 @RestController
-@RequestMapping("/util")
+@RequestMapping("/ecs/util")
 public class JsonController {
 
     @Autowired
@@ -60,11 +60,11 @@ public class JsonController {
 
     @ApiOperation(value = "去除转义", httpMethod = "GET")
     @RequestMapping("/unescape")
-    public String unEscapeString(String unescaped) {
-        if (StringUtils.isEmpty(unescaped)) {
+    public String unEscapeString(String escaped) {
+        if (StringUtils.isEmpty(escaped)) {
             return "";
         }
-        return StringEscapeUtils.unescapeJava(unescaped);
+        return StringEscapeUtils.unescapeJava(escaped);
     }
 
     @ApiOperation(value = "json格式化", httpMethod = "GET")

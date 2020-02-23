@@ -34,9 +34,9 @@ public class Swagger2Config {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("SwaggerUI演示")
-                .description("mall-tiny")
-                .contact("macro")
+                .title("ecs-app")
+                .description("ecs部署小工具集合")
+                .contact("Gavin")
                 .version("1.0")
                 .build();
     }

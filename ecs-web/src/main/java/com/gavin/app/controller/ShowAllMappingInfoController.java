@@ -27,7 +27,7 @@ import java.util.Map;
  * @author gavin
  * @date 2020/2/22 12:31 下午
  */
-@RestController
+//@RestController
 @RequestMapping("/seminar")
 public class ShowAllMappingInfoController {
 

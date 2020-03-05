@@ -37,7 +37,7 @@ import java.util.Map;
  */
 @Api(tags = "JsonController", description = "json处理")
 @RestController
-@RequestMapping("/ecs/util")
+@RequestMapping("/ecs/util/json")
 public class JsonController {
 
     @Autowired

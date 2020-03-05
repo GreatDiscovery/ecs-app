@@ -2,6 +2,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author gavin
@@ -15,5 +18,15 @@ public class JsonTest {
         JsonNode boolNode = jsonNode.get("bool");
         JsonNode mustNode = boolNode.get("must");
         System.out.println(mustNode.get(0).get("term").get("value").asText());
+    }
+}
+
+class StreamTest {
+    public static void main(String[] args) {
+        List<String> list = new ArrayList<>();
+        list.add("a");
+        list.add("b");
+        list.add("c");
+        list.stream().map(String::toLowerCase).sorted().collect(Collectors.toList());
     }
 }

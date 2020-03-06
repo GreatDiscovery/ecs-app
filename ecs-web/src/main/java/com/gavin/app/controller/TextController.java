@@ -2,8 +2,12 @@ package com.gavin.app.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Objects;
 
 /**
  * @author gavin
@@ -16,8 +20,9 @@ public class TextController {
 
     @ApiOperation(value = "合并所有行", httpMethod = "GET")
     @RequestMapping("/join")
-    public String joinLine() {
-        return "connection";
+    public String joinLine(String text) {
+        Objects.requireNonNull(text);
+        return text;
     }
 
     @ApiOperation(value = "去除所有空格", httpMethod = "GET")
@@ -34,7 +39,17 @@ public class TextController {
 
     @ApiOperation(value = "替换", httpMethod = "GET")
     @RequestMapping("/replace")
-    public String replace() {
-        return "connection";
+    public String replace(String text, String replaced, String replace) {
+        String result = "";
+        if (StringUtils.isEmpty(replaced)) {
+            replaced = " ";
+        }
+        switch (replaced) {
+            case "\\n":
+                result = text.trim().replaceAll("\n", replace);
+            case " " :
+                result = text.trim().replaceAll(" ", replace);
+        }
+        return result;
     }
 }

@@ -27,8 +27,13 @@ public class TextController {
 
     @ApiOperation(value = "去除所有空格", httpMethod = "GET")
     @RequestMapping("/drop")
-    public String dropSpace() {
-        return "connection";
+    public String dropSpace(String text) {
+        String response = "";
+        if (StringUtils.isEmpty(text)) {
+            return response;
+        }
+        response = StringUtils.deleteWhitespace(text);
+        return response;
     }
 
     @ApiOperation(value = "以特定分割符分割字符串", httpMethod = "GET")
@@ -40,16 +45,23 @@ public class TextController {
     @ApiOperation(value = "替换", httpMethod = "GET")
     @RequestMapping("/replace")
     public String replace(String text, String replaced, String replace) {
-        String result = "";
+        String response = "";
         if (StringUtils.isEmpty(replaced)) {
             replaced = " ";
         }
         switch (replaced) {
             case "\\n":
-                result = text.trim().replaceAll("\n", replace);
+                response = text.trim().replaceAll("\n", replace);
+                break;
+            case "\\t":
+                response = text.trim().replaceAll("\t", replace);
+                break;
             case " " :
-                result = text.trim().replaceAll(" ", replace);
+                response = text.trim().replaceAll(" ", replace);
+                break;
+            default:
+                response = text.trim().replaceAll(replaced, replace);
         }
-        return result;
+        return response;
     }
 }

@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 创建有业务含义名称的线程
+ *
  * @author gavin
  * @date 2020/3/14 4:49 下午
  */
@@ -18,11 +19,10 @@ public class PrefixNameThreadPoolTest {
                 TimeUnit.MILLISECONDS,
                 blockingQueue,
                 factory);
-        for (int i = 0; i < 5; i++) {
-            threadPoolExecutor.submit(() -> {
-                System.out.println(Thread.currentThread().getName() + "|" + Thread.currentThread().getThreadGroup().getName());
-            });
-        }
+        threadPoolExecutor.execute(() -> {
+            System.out.println(Thread.currentThread().getName() + "|" + Thread.currentThread().getThreadGroup().getName());
+        });
+
         threadPoolExecutor.shutdown();
     }
 }

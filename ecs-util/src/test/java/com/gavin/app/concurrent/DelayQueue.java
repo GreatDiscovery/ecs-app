@@ -32,7 +32,6 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements B
     }
 
 
-
     @Override
     public Iterator<E> iterator() {
         return null;
@@ -55,7 +54,40 @@ public class DelayQueue<E extends Delayed> extends AbstractQueue<E> implements B
 
     @Override
     public E take() throws InterruptedException {
-        return null;
+        final ReentrantLock lock = this.lock;
+        lock.lockInterruptibly();
+        try {
+            for (; ; ) {
+                E first = q.peek();
+                if (first == null) {
+                    available.await();
+                } else {
+                    long delay = first.getDelay(TimeUnit.NANOSECONDS);
+                    if (delay < 0) {
+                        return q.poll();
+                    }
+                    first = null;
+                    if (leader != null) {
+                        available.await();
+                    } else {
+                        Thread thisThread = Thread.currentThread();
+                        leader = thisThread;
+                        try {
+                            available.awaitNanos(delay);
+                        } finally {
+                            if (leader == thisThread) {
+                                leader = null;
+                            }
+                        }
+                    }
+                }
+            }
+        } finally {
+            if (leader == null && q.peek() != null) {
+                available.signal();
+            }
+            lock.unlock();
+        }
     }
 
     @Override

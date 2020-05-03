@@ -14,6 +14,7 @@
         <module>ecs-domain</module>
         <module>ecs-dao</module>
         <module>ecs-config</module>
+        <module>ecs-spring</module>
     </modules>
 
     <parent>

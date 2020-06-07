@@ -28,5 +28,6 @@ class StreamTest {
         list.add("b");
         list.add("c");
         list.stream().map(String::toLowerCase).sorted().collect(Collectors.toList());
+        list.parallelStream().sorted().collect(Collectors.toList());
     }
 }

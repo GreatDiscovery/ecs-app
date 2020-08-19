@@ -1,4 +1,4 @@
-package com.gavin.app.util.algorithm;
+package com.gavin.app.util.algorithm.tree;
 
 import org.junit.Test;
 

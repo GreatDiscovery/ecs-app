@@ -15,6 +15,7 @@
         <module>ecs-dao</module>
         <module>ecs-config</module>
         <module>ecs-spring</module>
+        <module>ecs-dubbo</module>
     </modules>
 
     <parent>

@@ -15,11 +15,12 @@ import java.util.*;
  */
 public class StringDp {
     public static void main(String[] args) {
-        String str = "a";
-        System.out.println(str.substring(0, 0));
+        List<String> list = new ArrayList<>(Arrays.asList("01", "10", "010", "101", "100"));
+        String s = "01010101010001101";
+        System.out.println(wordBreak(s, list));
     }
 
-    public boolean wordBreak(String s, List<String> wordDict) {
+    public static boolean wordBreak(String s, List<String> wordDict) {
         Set<String> set = new HashSet<>(wordDict);
         boolean[] dp = new boolean[wordDict.size() + 1];
         dp[0] = true;

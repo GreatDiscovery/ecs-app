@@ -1,7 +1,7 @@
 package com.gavin.app.util.design.visitor;
 
 /**
- * 访问者模式客户端
+ * 访问者模式客户端，用于修改class文件结构
  * https://juejin.im/entry/6844903582056054791
  *
  * @author: Gavin

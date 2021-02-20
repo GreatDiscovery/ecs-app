@@ -14,7 +14,7 @@ import java.util.concurrent.CountDownLatch;
  * @date: 2021/2/18 17:48
  * @description:
  */
-public class DistributeLimiter {
+public class DistributedLimiter {
     public static void main(String[] args) throws InterruptedException {
         RedissonClient client = Redisson.create();
         RRateLimiter rateLimiter = client.getRateLimiter("myRateLimiter");

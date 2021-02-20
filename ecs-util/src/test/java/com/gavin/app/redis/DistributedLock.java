@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 分布式锁
+ * todo 如何解决超时续期问题
  *
  * @author: Gavin
  * @date: 2020/11/30 22:27

@@ -1,6 +1,7 @@
 package com.gavin.app.limiter;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -28,10 +29,10 @@ public class MyDistributedLimiter {
     private static final Map<String, String> SCRIPT_SHA = new ConcurrentHashMap<>(10);
     private String name;
     private double maxPermits;
-    private Jedis jedis;
+    private JedisPool jedis;
 
 
-    private MyDistributedLimiter(String name, double maxPermits, Jedis jedis) {
+    private MyDistributedLimiter(String name, double maxPermits, JedisPool jedis) {
         this.name = name;
         this.maxPermits = maxPermits;
         this.jedis = jedis;
@@ -54,7 +55,7 @@ public class MyDistributedLimiter {
     }
 
     private void loadScript() {
-        SCRIPT_SHA.computeIfAbsent(SCRIPT, k -> ((String)jedis.scriptLoad(SCRIPT)));
+        SCRIPT_SHA.computeIfAbsent(SCRIPT, k -> ((String)jedis.getResource().scriptLoad(SCRIPT)));
         System.out.println("SCRIPT_SHA=" + SCRIPT_SHA.values());
     }
 
@@ -62,10 +63,10 @@ public class MyDistributedLimiter {
         String setRateScript = "redis.call('hsetnx', KEYS[1], 'rate', ARGV[1]);"
                 + "redis.call('hsetnx', KEYS[1], 'interval', ARGV[2]);"
                 + "return redis.call('hsetnx', KEYS[1], 'type', ARGV[3]);";
-        jedis.eval(setRateScript, 1, name, String.valueOf((int)maxPermits), "1000", "0");
+        jedis.getResource().eval(setRateScript, 1, name, String.valueOf((int)maxPermits), "1000", "0");
     }
 
-    public static MyDistributedLimiter create(String key, double maxPermits, Jedis jedis) {
+    public static MyDistributedLimiter create(String key, double maxPermits, JedisPool jedis) {
         return LIMITS.computeIfAbsent(key, k -> new MyDistributedLimiter(k, maxPermits, jedis));
     }
 
@@ -75,7 +76,10 @@ public class MyDistributedLimiter {
         String currentTime = String.valueOf(System.currentTimeMillis());
         String random = String.valueOf(ThreadLocalRandom.current().nextLong());
         System.out.println("evalsha " + SCRIPT_SHA.get(SCRIPT) + " 5 " + name + " " + valueName + " 1 " + permitName + " 1 " + "1 " + currentTime + " " + random);
-        long waitMicros = (long) jedis.evalsha(SCRIPT_SHA.get(SCRIPT), Arrays.asList(name, getValueName(), "1", getPermitsName(), "1"), Arrays.asList("1000", currentTime, random));
+        Long waitMicros = (Long) jedis.getResource().evalsha(SCRIPT_SHA.get(SCRIPT), Arrays.asList(name, getValueName(), "1", getPermitsName(), "1"), Arrays.asList("1", currentTime, random));
+        if (waitMicros == null) {
+            return 0;
+        }
         if (waitMicros > 0) {
             sleepUninterruptibly(waitMicros, MILLISECONDS);
         }
@@ -122,17 +126,26 @@ public class MyDistributedLimiter {
     }
 
     public static void main(String[] args) throws Exception {
-        Jedis jedis = new Jedis("127.0.0.1", 6379);
+        JedisPool jedis = new JedisPool("127.0.0.1", 6379);
         MyDistributedLimiter limiter = create("limiter", 1, jedis);
-        CountDownLatch countDownLatch = new CountDownLatch(5);
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
-        for (int i = 0; i < 1; i++) {
+        int nThread = 5;
+        long start = System.currentTimeMillis();
+        CountDownLatch countDownLatch = new CountDownLatch(nThread);
+        ExecutorService executorService = Executors.newFixedThreadPool(nThread);
+        for (int i = 0; i < nThread; i++) {
             executorService.submit(() -> {
-                System.out.println("------------------" + Thread.currentThread().getName() + ":" + limiter.acquire());
-                countDownLatch.countDown();
+                try {
+                    System.out.println("------------------" + Thread.currentThread().getName() + ":" + limiter.acquire());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    countDownLatch.countDown();
+                }
             });
         }
         countDownLatch.await();
         executorService.shutdown();
+        System.out.println("elapsed=" + (System.currentTimeMillis() - start));
+        jedis.close();
     }
 }

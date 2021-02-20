@@ -16,7 +16,10 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
+ * fixme
  * 分布式限流封装
+ * 这里有问题。假设1S产生1个令牌。
+ * 如果100个请求同时获取，则只有1个能获取到，剩下的99个会放入定时任务中，每隔1S延时再次调用，直到所有的请求获取完毕
  *
  * @author: Gavin
  * @date: 2021/2/20 10:05
@@ -70,6 +73,7 @@ public class MyDistributedLimiter {
         return LIMITS.computeIfAbsent(key, k -> new MyDistributedLimiter(k, maxPermits, jedis));
     }
 
+    // fixme 有问题，Redisson在这里启动的定时任务不断地调用
     public double acquire() {
         String valueName = getValueName();
         String permitName = getPermitsName();
@@ -127,8 +131,8 @@ public class MyDistributedLimiter {
 
     public static void main(String[] args) throws Exception {
         JedisPool jedis = new JedisPool("127.0.0.1", 6379);
-        MyDistributedLimiter limiter = create("limiter", 1, jedis);
-        int nThread = 5;
+        MyDistributedLimiter limiter = create("l", 1, jedis);
+        int nThread = 6;
         long start = System.currentTimeMillis();
         CountDownLatch countDownLatch = new CountDownLatch(nThread);
         ExecutorService executorService = Executors.newFixedThreadPool(nThread);

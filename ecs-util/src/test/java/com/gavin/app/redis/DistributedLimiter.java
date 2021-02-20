@@ -22,7 +22,7 @@ public class DistributedLimiter {
         // 最大流速 = 每1秒钟产生1个令牌
         rateLimiter.trySetRate(RateType.OVERALL, 1, 1, RateIntervalUnit.SECONDS);
 
-        int allThreadNum = 5;
+        int allThreadNum = 100;
         CountDownLatch latch = new CountDownLatch(allThreadNum);
         System.out.println("start-------------------------");
         long startTime = System.currentTimeMillis();

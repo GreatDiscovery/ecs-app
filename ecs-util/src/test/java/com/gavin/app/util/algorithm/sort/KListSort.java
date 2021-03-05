@@ -22,13 +22,21 @@ public class KListSort {
         System.out.println(mergeKList(list));
     }
 
-    // todo 有问题
+
     public static List<Integer> mergeKList(List<List<Integer>> list) {
         Queue<List<Integer>> queue =new PriorityQueue<List<Integer>>(Comparator.comparingInt(a -> a.get(0)));
         List<Integer> result = new ArrayList<>();
         queue.addAll(list);
         while (!queue.isEmpty()) {
+            List<Integer> tmp = queue.poll();
+            if (!tmp.isEmpty()) {
+                result.add(tmp.get(0));
+                tmp.remove(0);
+                if (!tmp.isEmpty()) {
+                    queue.add(tmp);
+                }
+            }
         }
-        return null;
+        return result;
     }
 }

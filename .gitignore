@@ -2,6 +2,8 @@ ecs-util/target
 ecs-util/.classpath
 ecs-web/target
 ecs-web/.classpath
+ecs-web/src/main/resources/application.yaml
+
 .project
 .settings
 .idea/compiler.xml

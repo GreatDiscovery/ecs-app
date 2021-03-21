@@ -22,6 +22,8 @@ public class RoaringBitmapTest {
         for (int i = 0; i < ONE_MILLION; i++) {
             list.add(i);
         }
+        Thread.sleep(20000);
+
         StopWatch stopWatch = new StopWatch();
         stopWatch.start("插入100W数据");
         RoaringBitmap bitmap = new RoaringBitmap();
@@ -30,13 +32,15 @@ public class RoaringBitmapTest {
         }
         stopWatch.stop();
         int duplication = 0;
-        stopWatch.start("查重100W数据");
-        for (int i = 0; i < list.size(); i++) {
-            if (bitmap.contains(list.get(i))) {
-                duplication++;
+        for (int j = 1; j < 10; j++) {
+            stopWatch.start("第" + j + "查重100W数据");
+            for (int i = 0; i < list.size(); i++) {
+                if (bitmap.contains(list.get(i))) {
+                    duplication++;
+                }
             }
+            stopWatch.stop();
         }
-        stopWatch.stop();
         System.out.println("duplication = " + duplication);
         System.out.println(stopWatch.prettyPrint());
         Thread.sleep(5000);

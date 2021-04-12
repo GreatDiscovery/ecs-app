@@ -2,6 +2,7 @@ package com.gavin.app.aop;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
  */
 @Component    //声明这是一个组件
 @Aspect       ///声明这是一个切面Bean
+@EnableAspectJAutoProxy
 public class HelloWorldAspect {
 
     //定义切点

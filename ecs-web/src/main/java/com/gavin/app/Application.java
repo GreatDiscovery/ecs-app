@@ -6,6 +6,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.PostConstruct;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2019-12-17 22:42
  */
 @EnableSwagger2
+@EnableScheduling
 @SpringBootApplication
 public class Application {
 

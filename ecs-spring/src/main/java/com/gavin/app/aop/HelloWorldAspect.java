@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
  * @date: 2021/4/12 21:38
  * @description:
  */
-@Component    //声明这是一个组件
-@Aspect       ///声明这是一个切面Bean
-@EnableAspectJAutoProxy
+//@Component    //声明这是一个组件
+//@Aspect       ///声明这是一个切面Bean
+//@EnableAspectJAutoProxy
 public class HelloWorldAspect {
 
     //定义切点

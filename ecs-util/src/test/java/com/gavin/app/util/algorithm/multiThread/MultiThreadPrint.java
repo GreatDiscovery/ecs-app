@@ -1,4 +1,4 @@
-package com.gavin.app.util.algorithm;
+package com.gavin.app.util.algorithm.multiThread;
 
 import java.util.ArrayList;
 import java.util.List;

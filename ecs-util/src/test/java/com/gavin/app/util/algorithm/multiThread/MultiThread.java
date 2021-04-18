@@ -1,4 +1,4 @@
-package com.gavin.app.util.algorithm;
+package com.gavin.app.util.algorithm.multiThread;
 
 /**
  * 3个线程顺序执行

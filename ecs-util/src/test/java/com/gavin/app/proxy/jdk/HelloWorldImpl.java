@@ -10,6 +10,6 @@ import com.gavin.app.proxy.jdk.HelloWorld;
 public class HelloWorldImpl implements HelloWorld {
     @Override
     public void sayHello() {
-        System.out.print("hello world");
+        System.out.println("hello world");
     }
 }

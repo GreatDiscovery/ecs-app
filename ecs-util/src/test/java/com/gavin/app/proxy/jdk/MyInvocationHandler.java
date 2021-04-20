@@ -17,7 +17,10 @@ public class MyInvocationHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        System.out.println("before proxy");
         System.out.println("method :"+ method.getName()+" is invoked!");
-        return method.invoke(target,args); // 执行相应的目标方法
+        Object invoke = method.invoke(target, args);// 执行相应的目标方法
+        System.out.println("after proxy");
+        return invoke;
     }
 }

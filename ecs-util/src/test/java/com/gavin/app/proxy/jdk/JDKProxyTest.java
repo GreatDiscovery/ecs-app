@@ -1,5 +1,9 @@
 package com.gavin.app.proxy.jdk;
 
+import sun.misc.ProxyGenerator;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.lang.reflect.Proxy;
 
 /**
@@ -11,10 +15,18 @@ import java.lang.reflect.Proxy;
  * @description:
  */
 public class JDKProxyTest {
-    public static void main(String[] args) {
-        HelloWorld helloWorld = (HelloWorld) Proxy.newProxyInstance(JDKProxyTest.class.getClassLoader(),
-                new Class<?>[]{HelloWorld.class},
-                new MyInvocationHandler(new HelloWorldImpl()));
-        helloWorld.sayHello();
+    public static void main(String[] args) throws Exception {
+        HelloWorld helloWorld = new HelloWorldImpl();
+        ClassLoader classLoader = helloWorld.getClass().getClassLoader();
+        Class<?>[] interfaces = helloWorld.getClass().getInterfaces();
+        HelloWorld proxy = (HelloWorld) Proxy.newProxyInstance(classLoader,
+                interfaces,
+                new MyInvocationHandler(helloWorld));
+        proxy.sayHello();
+        byte[] bts = ProxyGenerator.generateProxyClass("com.sun.proxy.$Proxy0", interfaces);
+        FileOutputStream fos = new FileOutputStream(new File("./$Proxy.class"));
+        fos.write(bts);
+        fos.flush();
+        fos.close();
     }
 }

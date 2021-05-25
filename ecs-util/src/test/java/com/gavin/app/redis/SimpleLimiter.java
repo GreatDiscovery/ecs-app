@@ -15,21 +15,39 @@ import java.util.List;
  */
 public class SimpleLimiter {
     static Jedis client = new Jedis("localhost", 6379);
+    /// 改脚本也可以实现
+//    final String script = "local key = KEYS[1]\n" +
+//            "local limit = tonumber(ARGV[1])\n" +
+//            "local curentLimit = tonumber(redis.call('get', key) or \"0\")\n" +
+//            "if curentLimit + 1 > limit then\n" +
+//            "  return 0\n" +
+//            "else\n" +
+//            "  redis.call(\"INCRBY\", key, 1)\n" +
+//            "  if (curentLimit == 0) then\n" +
+//            "    redis.call(\"EXPIRE\", key, 60)\n" +
+//            "  end \n" +
+//            "  return 1\n" +
+//            "end";
     final String script = "local key = KEYS[1]\n" +
             "local limit = tonumber(ARGV[1])\n" +
-            "local curentLimit = tonumber(redis.call('get', key) or \"0\")\n" +
-            "if curentLimit + 1 > limit then\n" +
-            "  return 0\n" +
-            "else\n" +
-            "  redis.call(\"INCRBY\", key, 1)\n" +
-            "  if (curentLimit == 0) then\n" +
-            "    redis.call(\"EXPIRE\", key, 60)\n" +
-            "  end \n" +
-            "  return 1\n" +
-            "end";
+            "local curentLimit = redis.call(\"GET\", key)\n" +
+            "\n" +
+            "if curentLimit ~= false then\n" +
+            "  curentLimit = tonumber(curentLimit)\n" +
+            "  if curentLimit >= limit then\n" +
+            "    return 0\n" +
+            "  else\n" +
+            "    redis.call(\"INCR\", key)\n" +
+            "\treturn 1\n" +
+            "  end\n" +
+            "end\n" +
+            "\n" +
+            "local flag = redis.call(\"SETEX\", key, 60, 1)\n" +
+            "return 1";
     private String sha = "";
 
     public void init() {
+        client.del("key1");
         sha = client.scriptLoad(script);
     }
 
@@ -50,17 +68,23 @@ public class SimpleLimiter {
         return false;
     }
 
-    public static void main(String[] args) {
-        client.del("key1");
-        final SimpleLimiter simpleLimiter = new SimpleLimiter();
+    public static void main(String[] args) throws InterruptedException {
+        SimpleLimiter simpleLimiter = new SimpleLimiter();
         simpleLimiter.init();
-        while (true) {
-            simpleLimiter.acquire();
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        for (int i = 0; i < 500; i++) {
+            System.out.println(i + "" + simpleLimiter.acquire());
         }
+        Thread.sleep(60000);
+        for (int i = 0; i < 500; i++) {
+            System.out.println(i + "" + simpleLimiter.acquire());
+        }
+//        while (true) {
+//            simpleLimiter.acquire();
+//            try {
+//                Thread.sleep(10000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 }

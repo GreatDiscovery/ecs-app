@@ -30,27 +30,27 @@ public class LuceneTest {
         // To store an index on disk, use this instead:
         //Directory directory = FSDirectory.open("/tmp/testindex");
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        IndexWriter iwriter = new IndexWriter(directory, config);
+        IndexWriter iWriter = new IndexWriter(directory, config);
         Document doc = new Document();
         String text = "This is the text to be indexed.";
-        doc.add(new Field("fieldname", text, TextField.TYPE_STORED));
-        iwriter.addDocument(doc);
-        iwriter.close();
+        doc.add(new Field("fieldName", text, TextField.TYPE_STORED));
+        iWriter.addDocument(doc);
+        iWriter.close();
 
         // Now search the index:
-        DirectoryReader ireader = DirectoryReader.open(directory);
-        IndexSearcher isearcher = new IndexSearcher(ireader);
+        DirectoryReader iReader = DirectoryReader.open(directory);
+        IndexSearcher iSearcher = new IndexSearcher(iReader);
         // Parse a simple query that searches for "text":
-        QueryParser parser = new QueryParser("fieldname", analyzer);
+        QueryParser parser = new QueryParser("fieldName", analyzer);
         Query query = parser.parse("text");
-        ScoreDoc[] hits = isearcher.search(query, 1000).scoreDocs;
+        ScoreDoc[] hits = iSearcher.search(query, 1000).scoreDocs;
         //assertEquals(1, hits.length);
         // Iterate through the results:
         for (int i = 0; i < hits.length; i++) {
-            Document hitDoc = isearcher.doc(hits[i].doc);
-            System.out.println(hitDoc.get("fieldname"));
+            Document hitDoc = iSearcher.doc(hits[i].doc);
+            System.out.println(hitDoc.get("fieldName"));
         }
-        ireader.close();
+        iReader.close();
         directory.close();
     }
 

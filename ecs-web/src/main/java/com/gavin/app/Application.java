@@ -58,18 +58,7 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        downloadExecutors.submit(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(10000);
-                    System.out.println("任务结束");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
         ConfigurableApplicationContext context = SpringApplication.run(Application.class);
-        SpringApplication.exit(context, () -> 402);
+//        SpringApplication.exit(context, () -> 402);
     }
 }

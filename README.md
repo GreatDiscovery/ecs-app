@@ -7,3 +7,9 @@
 
 ### todo
 1、web个人站
+
+### dubbo简化版功能
+1. dubboBootstrap
+    1. 配置，包括configManager和environment
+    2. 注册shutdownHook，用来处理生命周期结束的事情
+   

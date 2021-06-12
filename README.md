@@ -12,4 +12,5 @@
 1. dubboBootstrap
     1. 配置，包括configManager和environment
     2. 注册shutdownHook，用来处理生命周期结束的事情
+    3. Event用来触发Listener来处理特定事件
    

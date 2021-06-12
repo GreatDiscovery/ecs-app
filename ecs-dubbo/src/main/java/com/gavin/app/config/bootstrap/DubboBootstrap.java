@@ -1,7 +1,9 @@
 package com.gavin.app.config.bootstrap;
 
 import com.gavin.app.common.config.Environment;
+import com.gavin.app.config.shutdown.DubboShutdownHook;
 import com.gavin.app.config.context.ConfigManager;
+import com.gavin.app.config.shutdown.ShutdownHookCallbacks;
 
 /**
  * dubbo初始化
@@ -31,6 +33,11 @@ public class DubboBootstrap {
     private DubboBootstrap() {
         configManager = new ConfigManager();
         environment = new Environment();
+        DubboShutdownHook.getDubboShutdownHook().register();
+        ShutdownHookCallbacks.INSTANCE.addCallback(DubboBootstrap.this::destroy);
+    }
 
+    private void destroy() {
+        // todo 资源释放
     }
 }

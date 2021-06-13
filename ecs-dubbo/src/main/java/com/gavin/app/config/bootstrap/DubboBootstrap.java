@@ -1,5 +1,6 @@
 package com.gavin.app.config.bootstrap;
 
+import com.gavin.app.common.config.ApplicationConfig;
 import com.gavin.app.common.config.Environment;
 import com.gavin.app.config.shutdown.DubboShutdownHook;
 import com.gavin.app.config.context.ConfigManager;
@@ -19,7 +20,7 @@ public class DubboBootstrap {
 
     private Environment environment;
 
-    public DubboBootstrap getInstance() {
+    public static DubboBootstrap getInstance() {
         if (instance == null) {
             synchronized (DubboBootstrap.class) {
                 if (instance == null) {
@@ -39,5 +40,10 @@ public class DubboBootstrap {
 
     private void destroy() {
         // todo 资源释放
+    }
+
+    public DubboBootstrap application(ApplicationConfig application) {
+        configManager.setApplication(application);
+        return this;
     }
 }

@@ -1,6 +1,7 @@
 package com.gavin.app;
 
 import com.gavin.app.common.config.ApplicationConfig;
+import com.gavin.app.common.config.RegisterConfig;
 import com.gavin.app.common.config.ServiceConfig;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.service.DemoService;
@@ -21,6 +22,10 @@ public class ProviderApplication {
         serviceConfig.setRef(new DemoServiceImpl());
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap.application(new ApplicationConfig("demo-dubbo-provider"));
+        bootstrap.application(new ApplicationConfig("demo-dubbo-provider"))
+                .register(new RegisterConfig("zookeeper://127.0.0.1:2181"))
+                .service(serviceConfig)
+                .start()
+                .await();
     }
 }

@@ -4,7 +4,7 @@ package com.gavin.app.common.config;
  * @author gavin
  * @date 2021/6/13 下午3:21
  */
-public class ServiceConfigBase<T> {
+public class ServiceConfigBase<T> extends AbstractConfig{
     // 导出服务的名称
     protected String interfaceName;
 

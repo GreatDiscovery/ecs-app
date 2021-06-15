@@ -2,6 +2,8 @@ package com.gavin.app.config.context;
 
 import com.gavin.app.common.config.AbstractConfig;
 import com.gavin.app.common.config.ApplicationConfig;
+import com.gavin.app.common.config.RegisterConfig;
+import com.gavin.app.common.config.ServiceConfigBase;
 import com.gavin.app.common.util.StringUtils;
 
 import java.util.HashMap;
@@ -31,18 +33,27 @@ public class ConfigManager {
     public ConfigManager() {
     }
 
-    public void addConfig(ApplicationConfig config) {
+    public void addConfig(AbstractConfig config) {
         addConfig(config, true);
     }
 
-    public void addConfig(ApplicationConfig config, boolean unique) {
+    public void addConfig(AbstractConfig config, boolean unique) {
         write(() -> {
             Map<String, AbstractConfig> configMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> new HashMap<>());
+            addIfAbsent(config, configMap, true);
         });
     }
 
     public void setApplication(ApplicationConfig config) {
         addConfig(config);
+    }
+
+    public void addRegister(RegisterConfig registerConfig) {
+        addConfig(registerConfig);
+    }
+
+    public void addService(ServiceConfigBase<?> serviceConfigBase) {
+        addConfig(serviceConfigBase);
     }
 
     private void write(Runnable runnable) {

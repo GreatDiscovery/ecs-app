@@ -1,15 +1,14 @@
 package com.gavin.app.config.bootstrap;
 
-import com.gavin.app.common.config.ApplicationConfig;
-import com.gavin.app.common.config.Environment;
-import com.gavin.app.common.config.RegisterConfig;
-import com.gavin.app.common.config.ServiceConfigBase;
+import com.gavin.app.common.config.*;
 import com.gavin.app.config.shutdown.DubboShutdownHook;
 import com.gavin.app.config.context.ConfigManager;
 import com.gavin.app.config.shutdown.ShutdownHookCallbacks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
@@ -41,6 +40,11 @@ public class DubboBootstrap {
 
     private Environment environment;
 
+    private AtomicBoolean started = new AtomicBoolean(false);
+    private AtomicBoolean ready = new AtomicBoolean(true);
+
+    private List<ServiceConfigBase<?>> exportedServices = new ArrayList<>();
+
     public static DubboBootstrap getInstance() {
         if (instance == null) {
             synchronized (DubboBootstrap.class) {
@@ -59,7 +63,12 @@ public class DubboBootstrap {
         ShutdownHookCallbacks.INSTANCE.addCallback(DubboBootstrap.this::destroy);
     }
 
-    private void destroy() {
+
+    public void initialize() {
+        // todo 初始化逻辑
+    }
+
+    public void destroy() {
         // todo 资源释放
     }
 
@@ -79,7 +88,25 @@ public class DubboBootstrap {
     }
 
     public DubboBootstrap start() {
+        if (started.compareAndSet(false, true)) {
+            ready.set(false);
+            initialize();
+            exportService();
+            ready.set(true);
+        }
         return this;
+    }
+
+
+
+    // 暴露dubbo服务
+    private void exportService() {
+        configManager.getServices().forEach(sc -> {
+            ServiceConfig serviceConfig = (ServiceConfig) sc;
+            serviceConfig.setBootstrap(this);
+            serviceConfig.export();
+            exportedServices.add(serviceConfig);
+        });
     }
 
     public DubboBootstrap await() {

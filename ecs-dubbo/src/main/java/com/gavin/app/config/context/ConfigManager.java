@@ -6,6 +6,8 @@ import com.gavin.app.common.config.RegisterConfig;
 import com.gavin.app.common.config.ServiceConfigBase;
 import com.gavin.app.common.util.StringUtils;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -44,6 +46,14 @@ public class ConfigManager {
         });
     }
 
+    public <C extends AbstractConfig> Collection<C> getConfigs(String configType) {
+        return (Collection<C>) read(() -> getConfigMap(configType).values());
+    }
+
+    public <C extends AbstractConfig> Map<String, C> getConfigMap(String configType) {
+        return (Map<String, C>) read(() -> configsCache.getOrDefault(configType, Collections.emptyMap()));
+    }
+
     public void setApplication(ApplicationConfig config) {
         addConfig(config);
     }
@@ -54,6 +64,24 @@ public class ConfigManager {
 
     public void addService(ServiceConfigBase<?> serviceConfigBase) {
         addConfig(serviceConfigBase);
+    }
+
+    public Collection<ServiceConfigBase> getServices() {
+        return getConfigs(getTagName(ServiceConfigBase.class));
+    }
+
+    private <V> V read(Callable<V> callable) {
+        V value = null;
+        Lock readLock = readWriteLock.readLock();
+        try {
+            readLock.lock();
+            value = callable.call();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        } finally {
+            readLock.unlock();
+        }
+        return value;
     }
 
     private void write(Runnable runnable) {

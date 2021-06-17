@@ -29,7 +29,8 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     private void doExportUrls() {
         ServiceRepository repository = new ServiceRepository();
-        ServiceDescriptor descriptor = new ServiceDescriptor();
+        ServiceDescriptor descriptor = repository.registerService(getInterfaceClass());
+
 
     }
 

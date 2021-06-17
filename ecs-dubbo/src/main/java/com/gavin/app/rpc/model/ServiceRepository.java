@@ -13,4 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServiceRepository {
     // service
     private Map<String, ServiceDescriptor> services = new ConcurrentHashMap<>();
+
+    // providers
+    private Map<String, ProviderModel> providers = new ConcurrentHashMap<>();
+
+    // consumers
+    private Map<String, ConsumerModel> consumers = new ConcurrentHashMap<>();
+
+    public ServiceDescriptor registerService(Class<?> interfaceClass) {
+        return services.computeIfAbsent(interfaceClass.getName(), _k -> new ServiceDescriptor(interfaceClass));
+    }
 }

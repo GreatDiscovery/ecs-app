@@ -1,5 +1,6 @@
 package com.gavin.app.common.config;
 
+import com.gavin.app.common.URL;
 import com.gavin.app.common.util.StringUtils;
 
 /**
@@ -49,5 +50,9 @@ public abstract class ServiceConfigBase<T> extends AbstractConfig{
             }
         }
         return interfaceClass;
+    }
+
+    public String getUniqueServiceName() {
+        return URL.buildKey(interfaceName, getGroup(), getVersion());
     }
 }

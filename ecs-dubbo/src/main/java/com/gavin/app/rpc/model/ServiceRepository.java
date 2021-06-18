@@ -1,5 +1,7 @@
 package com.gavin.app.rpc.model;
 
+import com.gavin.app.common.config.ServiceConfigBase;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,5 +24,10 @@ public class ServiceRepository {
 
     public ServiceDescriptor registerService(Class<?> interfaceClass) {
         return services.computeIfAbsent(interfaceClass.getName(), _k -> new ServiceDescriptor(interfaceClass));
+    }
+
+    public void registerProvider(String serviceKey, Object serviceInstance, ServiceDescriptor serviceModel, ServiceConfigBase<?> serviceConfigBase) {
+        ProviderModel providerModel = new ProviderModel(serviceKey, serviceInstance, serviceModel, serviceConfigBase);
+        providers.putIfAbsent(serviceKey, providerModel);
     }
 }

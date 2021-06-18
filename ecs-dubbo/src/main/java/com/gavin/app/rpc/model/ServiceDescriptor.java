@@ -34,5 +34,10 @@ public class ServiceDescriptor {
             List<MethodDescriptor> methodDescriptors = methods.computeIfAbsent(method.getName(), _k -> new ArrayList<>(1));
             methodDescriptors.add(new MethodDescriptor(method));
         }
+
+        methods.forEach((methodName, methodList) -> {
+            Map<String, MethodDescriptor> methodDescriptorMap = descToMethods.computeIfAbsent(methodName, _k -> new HashMap<>());
+            methodList.forEach(methodDescriptor -> methodDescriptorMap.put(methodDescriptor.getParamDesc(), methodDescriptor));
+        });
     }
 }

@@ -128,6 +128,19 @@ public class URL implements Serializable {
         return new URL(protocol, userName, password, host, port, path, parameters);
     }
 
+    // group/path:version
+    public static String buildKey(String path, String group, String version) {
+        StringBuilder buf = new StringBuilder();
+        if (!StringUtils.isEmpty(group)) {
+            buf.append(group).append("/");
+        }
+        buf.append(path);
+        if (!StringUtils.isEmpty(version)) {
+            buf.append(":").append(version);
+        }
+        return buf.toString();
+    }
+
     public String getProtocol() {
         return protocol;
     }

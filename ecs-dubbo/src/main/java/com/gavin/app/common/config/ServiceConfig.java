@@ -35,11 +35,11 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         ServiceDescriptor descriptor = repository.registerService(getInterfaceClass());
         repository.registerProvider(getUniqueServiceName(), ref, descriptor, this);
 
-        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
-
-        for (ProtocolConfig protocol : protocols) {
-            doExportUrlsFor1Protocol(protocol, registryURLs);
-        }
+//        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
+//
+//        for (ProtocolConfig protocol : protocols) {
+//            doExportUrlsFor1Protocol(protocol, registryURLs);
+//        }
     }
 
     public void exported() {

@@ -1,6 +1,5 @@
 package com.gavin.app.common.util;
 
-import javassist.NotFoundException;
 
 /**
  * @author: Gavin
@@ -61,7 +60,7 @@ public class ReflectUtils {
      *
      * @param cs class array.
      * @return desc.
-     * @throws NotFoundException
+     * @throws
      */
     public static String getDesc(final Class<?>[] cs) {
         if (cs.length == 0) {
@@ -82,7 +81,7 @@ public class ReflectUtils {
      *
      * @param c class.
      * @return desc.
-     * @throws NotFoundException
+     * @throws
      */
     public static String getDesc(Class<?> c) {
         StringBuilder ret = new StringBuilder();

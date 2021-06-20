@@ -7,7 +7,7 @@ import com.gavin.app.common.util.StringUtils;
  * @author gavin
  * @date 2021/6/13 下午3:21
  */
-public abstract class ServiceConfigBase<T> extends AbstractConfig{
+public abstract class ServiceConfigBase<T> extends AbstractServiceConfig {
     // 导出服务的名称
     protected String interfaceName;
 

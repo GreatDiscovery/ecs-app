@@ -4,6 +4,7 @@ import com.gavin.app.common.config.AbstractConfig;
 import com.gavin.app.common.config.ApplicationConfig;
 import com.gavin.app.common.config.RegisterConfig;
 import com.gavin.app.common.config.ServiceConfigBase;
+import com.gavin.app.common.context.FrameworkExt;
 import com.gavin.app.common.util.StringUtils;
 
 import java.util.Collection;
@@ -21,7 +22,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @author gavin
  * @date 2021/6/10 下午11:17
  */
-public class ConfigManager {
+public class ConfigManager implements FrameworkExt {
+
+    public static final String NAME = "config";
 
     /**
      * The suffix container

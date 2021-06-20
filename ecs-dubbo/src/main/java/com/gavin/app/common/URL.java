@@ -1,7 +1,6 @@
 package com.gavin.app.common;
 
 import com.gavin.app.common.util.StringUtils;
-import org.apache.ibatis.scripting.xmltags.ChooseSqlNode;
 
 import java.io.Serializable;
 import java.util.Collections;

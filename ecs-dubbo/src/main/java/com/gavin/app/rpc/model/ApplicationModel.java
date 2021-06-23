@@ -1,5 +1,6 @@
 package com.gavin.app.rpc.model;
 
+import com.gavin.app.common.config.Environment;
 import com.gavin.app.common.context.FrameworkExt;
 import com.gavin.app.common.extension.ExtensionLoader;
 import com.gavin.app.config.context.ConfigManager;
@@ -13,9 +14,13 @@ import com.gavin.app.config.context.ConfigManager;
  */
 public class ApplicationModel {
 
-    ExtensionLoader<FrameworkExt> LOADER = new ExtensionLoader<>();
+    private static final ExtensionLoader<FrameworkExt> LOADER = new ExtensionLoader<>();
 
-    public ConfigManager getConfigManager() {
+    public static ConfigManager getConfigManager() {
         return (ConfigManager) LOADER.getExtension(ConfigManager.NAME);
+    }
+
+    public static Environment getEnvironment() {
+        return (Environment) LOADER.getExtension(Environment.NAME);
     }
 }

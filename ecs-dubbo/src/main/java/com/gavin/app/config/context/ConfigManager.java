@@ -26,11 +26,6 @@ public class ConfigManager implements FrameworkExt {
 
     public static final String NAME = "config";
 
-    /**
-     * The suffix container
-     */
-    private static final String[] SUFFIXES = new String[]{"Config", "Bean", "ConfigBase"};
-
     private Map<String, Map<String, AbstractConfig>> configsCache = new HashMap<>();
 
     private ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
@@ -44,7 +39,7 @@ public class ConfigManager implements FrameworkExt {
 
     public void addConfig(AbstractConfig config, boolean unique) {
         write(() -> {
-            Map<String, AbstractConfig> configMap = configsCache.computeIfAbsent(getTagName(config.getClass()), type -> new HashMap<>());
+            Map<String, AbstractConfig> configMap = configsCache.computeIfAbsent(AbstractConfig.getTagName(config.getClass()), type -> new HashMap<>());
             addIfAbsent(config, configMap, true);
         });
     }
@@ -70,7 +65,7 @@ public class ConfigManager implements FrameworkExt {
     }
 
     public Collection<ServiceConfigBase> getServices() {
-        return getConfigs(getTagName(ServiceConfigBase.class));
+        return getConfigs(AbstractConfig.getTagName(ServiceConfigBase.class));
     }
 
     private <V> V read(Callable<V> callable) {
@@ -110,16 +105,7 @@ public class ConfigManager implements FrameworkExt {
         return value;
     }
 
-    private String getTagName(Class<?> cls) {
-        String simpleName = cls.getSimpleName();
-        for (String suffix : SUFFIXES) {
-            if (simpleName.endsWith(suffix)) {
-                simpleName = simpleName.substring(0, simpleName.length() - suffix.length());
-                break;
-            }
-        }
-        return StringUtils.camelToSplitName(simpleName, "-");
-    }
+
 
     static <C extends AbstractConfig> void addIfAbsent(C config, Map<String, C> map, boolean unique) {
         String key = config.getId();

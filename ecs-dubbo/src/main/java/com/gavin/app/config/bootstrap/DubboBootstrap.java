@@ -4,6 +4,7 @@ import com.gavin.app.common.config.*;
 import com.gavin.app.config.shutdown.DubboShutdownHook;
 import com.gavin.app.config.context.ConfigManager;
 import com.gavin.app.config.shutdown.ShutdownHookCallbacks;
+import com.gavin.app.rpc.model.ApplicationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,8 +58,8 @@ public class DubboBootstrap {
     }
 
     private DubboBootstrap() {
-        configManager = new ConfigManager();
-        environment = new Environment();
+        configManager = ApplicationModel.getConfigManager();
+        environment = ApplicationModel.getEnvironment();
         DubboShutdownHook.getDubboShutdownHook().register();
         ShutdownHookCallbacks.INSTANCE.addCallback(DubboBootstrap.this::destroy);
     }

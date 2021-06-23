@@ -108,7 +108,12 @@ public class ConfigManager implements FrameworkExt {
 
 
     static <C extends AbstractConfig> void addIfAbsent(C config, Map<String, C> map, boolean unique) {
-        String key = config.getId();
+        String key = getId(config);
         map.put(key, config);
+    }
+
+    static  <C extends AbstractConfig> String getId(C config) {
+        String id = config.getId();
+        return !StringUtils.isEmpty(id) ? id : config.getClass().getSimpleName();
     }
 }

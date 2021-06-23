@@ -16,6 +16,6 @@ public class ApplicationConfig extends AbstractConfig {
 
     public void setName(String name) {
         this.name = name;
-        this.id = id;
+        this.id = name;
     }
 }

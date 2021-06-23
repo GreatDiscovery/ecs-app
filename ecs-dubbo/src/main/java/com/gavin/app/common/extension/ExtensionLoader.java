@@ -58,9 +58,9 @@ public class ExtensionLoader<T> {
     public Holder<Object> getOrCreateHolder(String name) {
         Holder<Object> holder = cachedInstances.get(name);
         if (holder == null) {
-            holder = cachedInstances.putIfAbsent(name, new Holder<>());
+            cachedInstances.putIfAbsent(name, new Holder<>());
         }
-        return holder;
+        return cachedInstances.get(name);
     }
 
     public T createExtension(String name, boolean wrap) {
@@ -72,6 +72,7 @@ public class ExtensionLoader<T> {
         if (instance == null) {
             try {
                 EXTENSION_INSTANCES.putIfAbsent(aClass, aClass.newInstance());
+                instance = (T) EXTENSION_INSTANCES.get(aClass);
             } catch (InstantiationException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {

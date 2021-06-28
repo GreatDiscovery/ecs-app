@@ -78,8 +78,8 @@ public class DubboBootstrap {
         return this;
     }
 
-    public DubboBootstrap register(RegisterConfig registerConfig) {
-        configManager.addRegister(registerConfig);
+    public DubboBootstrap register(RegistryConfig registryConfig) {
+        configManager.addRegister(registryConfig);
         return this;
     }
 

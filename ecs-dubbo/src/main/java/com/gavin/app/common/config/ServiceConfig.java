@@ -2,6 +2,7 @@ package com.gavin.app.common.config;
 
 import com.gavin.app.common.URL;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
+import com.gavin.app.config.util.ConfigValidationUtils;
 import com.gavin.app.rpc.model.ServiceDescriptor;
 import com.gavin.app.rpc.model.ServiceRepository;
 
@@ -21,6 +22,8 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             bootstrap = DubboBootstrap.getInstance();
             bootstrap.initialize();
         }
+        checkAndUpdateSubConfigs();
+
         doExport();
         exported();
     }
@@ -35,7 +38,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         ServiceDescriptor descriptor = repository.registerService(getInterfaceClass());
         repository.registerProvider(getUniqueServiceName(), ref, descriptor, this);
 
-//        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
+        List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
 //
 //        for (ProtocolConfig protocol : protocols) {
 //            doExportUrlsFor1Protocol(protocol, registryURLs);
@@ -52,5 +55,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     public void setBootstrap(DubboBootstrap bootstrap) {
         this.bootstrap = bootstrap;
+    }
+
+    private void checkAndUpdateSubConfigs() {
+        checkRegistry();
     }
 }

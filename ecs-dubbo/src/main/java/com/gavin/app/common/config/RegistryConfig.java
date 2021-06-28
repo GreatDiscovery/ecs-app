@@ -12,7 +12,7 @@ import java.util.Map;
  * @author gavin
  * @date 2021/6/13 下午4:55
  */
-public class RegisterConfig extends AbstractConfig {
+public class RegistryConfig extends AbstractConfig {
 
     /**
      * 配置中心URL
@@ -29,7 +29,7 @@ public class RegisterConfig extends AbstractConfig {
 
     private Map<String, String> parameters;
 
-    public RegisterConfig(String address) {
+    public RegistryConfig(String address) {
         setAddress(address);
     }
 

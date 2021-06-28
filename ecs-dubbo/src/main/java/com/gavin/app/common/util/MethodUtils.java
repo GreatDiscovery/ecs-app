@@ -1,7 +1,6 @@
 package com.gavin.app.common.util;
 
-import com.google.common.xml.XmlEscapers;
-import org.apache.commons.lang3.ClassUtils;
+import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

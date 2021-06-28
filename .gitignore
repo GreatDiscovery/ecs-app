@@ -3,6 +3,9 @@ ecs-util/.classpath
 ecs-web/target
 ecs-web/.classpath
 ecs-web/src/main/resources/application.yaml
+ecs-config/target
+ecs-dao/target
+ecs-dubbo/target
 
 .project
 .settings

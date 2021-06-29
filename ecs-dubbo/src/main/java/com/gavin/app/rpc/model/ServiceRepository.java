@@ -26,6 +26,14 @@ public class ServiceRepository {
         return services.computeIfAbsent(interfaceClass.getName(), _k -> new ServiceDescriptor(interfaceClass));
     }
 
+    public ServiceDescriptor registerService(String pathKey, Class<?> interfaceClass) {
+        ServiceDescriptor serviceDescriptor = registerService(interfaceClass);
+        if (!interfaceClass.getName().equals(pathKey)) {
+            services.putIfAbsent(pathKey, serviceDescriptor);
+        }
+        return serviceDescriptor;
+    }
+
     public void registerProvider(String serviceKey, Object serviceInstance, ServiceDescriptor serviceModel, ServiceConfigBase<?> serviceConfigBase) {
         ProviderModel providerModel = new ProviderModel(serviceKey, serviceInstance, serviceModel, serviceConfigBase);
         providers.putIfAbsent(serviceKey, providerModel);

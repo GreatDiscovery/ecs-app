@@ -9,10 +9,7 @@ import com.gavin.app.common.config.RegistryConfig;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 验证几个主要的配置类
@@ -37,8 +34,13 @@ public class ConfigValidationUtils {
                 AbstractConfig.appendParameters(map, application);
                 AbstractConfig.appendParameters(map, registry);
                 AbstractConfig.appendRuntimeParameters(map);
+                if (!map.containsKey(CommonConstants.PROTOCOL_KEY)) {
+                    map.put(CommonConstants.PROTOCOL_KEY, CommonConstants.DUBBO_PROTOCOL);
+                }
+                List<URL> urlList = new ArrayList(Arrays.asList(URL.valueOf(address)));
+                registerList.addAll(urlList);
             }
         }
-        return null;
+        return registerList;
     }
 }

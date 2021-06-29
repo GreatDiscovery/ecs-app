@@ -1,6 +1,7 @@
 package com.gavin.app.common.config;
 
 import com.gavin.app.common.URL;
+import com.gavin.app.common.util.StringUtils;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.config.util.ConfigValidationUtils;
 import com.gavin.app.rpc.model.ServiceDescriptor;
@@ -30,6 +31,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     // 真正实现暴露服务的方法
     protected synchronized void doExport() {
+        if (StringUtils.isEmpty(path)) {
+            path = interfaceName;
+        }
         doExportUrls();
     }
 
@@ -39,12 +43,22 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         repository.registerProvider(getUniqueServiceName(), ref, descriptor, this);
 
         List<URL> registryURLs = ConfigValidationUtils.loadRegistries(this, true);
-//
-//        for (ProtocolConfig protocol : protocols) {
-//            doExportUrlsFor1Protocol(protocol, registryURLs);
-//        }
+
+        for (ProtocolConfig protocol : protocols) {
+            String key = URL.buildKey(path, group, version);
+            // 这里根据group和version不同，注册的是不同的服务
+            repository.registerService(key, getInterfaceClass());
+            doExportUrlsFor1Protocol(protocol, registryURLs);
+        }
     }
 
+    private void doExportUrlsFor1Protocol(ProtocolConfig protocol, List<URL> registryURLs) {
+
+    }
+
+    /**
+     * 已经导出服务
+     */
     public void exported() {
 
     }
@@ -58,6 +72,11 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
     }
 
     private void checkAndUpdateSubConfigs() {
+        // 创建providerConfig
+        checkDefault();
+        // 创建默认的dubbo protocol
+        checkProtocol();
+        // 检查注册仓库信息
         checkRegistry();
     }
 }

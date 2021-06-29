@@ -1,9 +1,6 @@
 package com.gavin.app.config.context;
 
-import com.gavin.app.common.config.AbstractConfig;
-import com.gavin.app.common.config.ApplicationConfig;
-import com.gavin.app.common.config.RegistryConfig;
-import com.gavin.app.common.config.ServiceConfigBase;
+import com.gavin.app.common.config.*;
 import com.gavin.app.common.context.FrameworkExt;
 import com.gavin.app.common.util.StringUtils;
 
@@ -132,5 +129,10 @@ public class ConfigManager implements FrameworkExt {
     static  <C extends AbstractConfig> String getId(C config) {
         String id = config.getId();
         return !StringUtils.isEmpty(id) ? id : config.getClass().getSimpleName();
+    }
+
+    public Optional<ProviderConfig> getDefaultProvider() {
+        // todo 如何生成provider
+        return Optional.empty();
     }
 }

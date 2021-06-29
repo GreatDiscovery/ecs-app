@@ -18,4 +18,8 @@ public interface CommonConstants {
     String TIMESTAMP_KEY = "timestamp";
 
     String PID_KEY = "pid";
+
+    String PROTOCOL_KEY = "protocol";
+
+    String DUBBO_PROTOCOL = "dubbo";
 }

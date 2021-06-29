@@ -1,10 +1,14 @@
 package com.gavin.app.common.config;
 
+import com.gavin.app.common.CommonConstants;
+import com.gavin.app.common.Version;
 import com.gavin.app.common.util.MethodUtils;
+import com.gavin.app.common.util.PidUtil;
 import com.gavin.app.common.util.StringUtils;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gavin
@@ -33,7 +37,7 @@ public class AbstractConfig {
 
     /**
      * The protocol list the service will export with
-     *  only one of them will work.
+     * only one of them will work.
      */
     protected List<ProtocolConfig> protocols;
 
@@ -66,6 +70,36 @@ public class AbstractConfig {
             }
         }
         return StringUtils.camelToSplitName(simpleName, "-");
+    }
+
+    public static void appendParameters(Map<String, String> map, Object config) {
+        if (config == null) {
+            return;
+        }
+        Method[] methods = config.getClass().getMethods();
+        for (Method method : methods) {
+            try {
+                if (MethodUtils.isGetter(method)) {
+                    String key = MethodUtils.getGetterAttribute(method.getName());
+                    Object value = method.invoke(config);
+                    if (value != null) {
+                        String trim = String.valueOf(value).trim();
+                        if (trim != null && trim.length() > 0) {
+                            map.put(key, trim);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new IllegalStateException(e.getCause());
+            }
+        }
+    }
+
+    public static void appendRuntimeParameters(Map<String, String> map) {
+        map.put(CommonConstants.DUBBO_VERSION_KEY, Version.DEFAULT_DUBBO_PROTOCOL_VERSION);
+        map.put(CommonConstants.RELEASE_KEY, Version.getVersion());
+        map.put(CommonConstants.TIMESTAMP_KEY, String.valueOf(System.currentTimeMillis()));
+        map.put(CommonConstants.PID_KEY, String.valueOf(PidUtil.getPid()));
     }
 
     @Override

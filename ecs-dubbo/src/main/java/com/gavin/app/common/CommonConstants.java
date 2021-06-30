@@ -22,4 +22,11 @@ public interface CommonConstants {
     String PROTOCOL_KEY = "protocol";
 
     String DUBBO_PROTOCOL = "dubbo";
+
+    /**
+     * provider还是consumer
+     */
+    String SIDE_KEY = "side";
+
+    String PRIVIDER_KEY = "provider";
 }

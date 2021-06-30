@@ -1,5 +1,6 @@
 package com.gavin.app.common.config;
 
+import com.gavin.app.common.CommonConstants;
 import com.gavin.app.common.URL;
 import com.gavin.app.common.util.StringUtils;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
@@ -7,7 +8,9 @@ import com.gavin.app.config.util.ConfigValidationUtils;
 import com.gavin.app.rpc.model.ServiceDescriptor;
 import com.gavin.app.rpc.model.ServiceRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author gavin
@@ -52,7 +55,17 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         }
     }
 
-    private void doExportUrlsFor1Protocol(ProtocolConfig protocol, List<URL> registryURLs) {
+    private void doExportUrlsFor1Protocol(ProtocolConfig protocolConfig, List<URL> registryURLs) {
+        String name = protocolConfig.getName();
+        if (StringUtils.isEmpty(name)) {
+            name = CommonConstants.DUBBO_PROTOCOL;
+        }
+        Map<String, String> map = new HashMap<>();
+        map.put(CommonConstants.SIDE_KEY, CommonConstants.PRIVIDER_KEY);
+        AbstractServiceConfig.appendRuntimeParameters(map);
+        AbstractServiceConfig.appendParameters(map, provider);
+        AbstractServiceConfig.appendParameters(map, protocolConfig);
+        AbstractServiceConfig.appendParameters(map, this);
 
     }
 

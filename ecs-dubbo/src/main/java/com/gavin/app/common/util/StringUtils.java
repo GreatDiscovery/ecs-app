@@ -5,6 +5,7 @@ package com.gavin.app.common.util;
  * @date 2021/6/13 下午4:28
  */
 public class StringUtils {
+    public static final String EMPTY_STRING = "";
     /**
      * 将驼峰名称变为分隔符名称
      * @param camelName
@@ -38,5 +39,16 @@ public class StringUtils {
 
     public static boolean isEmpty(String str) {
         return str == null || "".equals(str);
+    }
+
+    public static String join(String[] arr) {
+        if (ArrayUtils.isEmpty(arr)) {
+            return EMPTY_STRING;
+        }
+        StringBuilder buffer = new StringBuilder();
+        for (String s : arr) {
+            buffer.append(s);
+        }
+        return buffer.toString();
     }
 }

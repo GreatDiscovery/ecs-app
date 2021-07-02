@@ -2,6 +2,7 @@ package com.gavin.app.common.config;
 
 import com.gavin.app.common.CommonConstants;
 import com.gavin.app.common.URL;
+import com.gavin.app.common.bytecode.Wrapper;
 import com.gavin.app.common.util.StringUtils;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.config.util.ConfigValidationUtils;
@@ -66,6 +67,12 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         AbstractServiceConfig.appendParameters(map, provider);
         AbstractServiceConfig.appendParameters(map, protocolConfig);
         AbstractServiceConfig.appendParameters(map, this);
+        String[] methodNames = Wrapper.getWrapper(interfaceClass).getMethodNames();
+        if (methodNames.length == 0) {
+            map.put(CommonConstants.METHODS_KEY, "*");
+        } else {
+            map.put(CommonConstants.METHODS_KEY, StringUtils.join(methodNames, ","));
+        }
 
     }
 
@@ -91,5 +98,9 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         checkProtocol();
         // 检查注册仓库信息
         checkRegistry();
+    }
+
+    private void findConfigedHosts(ProtocolConfig protocolConfig, List<URL> registryUrls, Map<String, String> map) {
+
     }
 }

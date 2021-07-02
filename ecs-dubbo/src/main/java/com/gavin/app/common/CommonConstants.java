@@ -29,4 +29,8 @@ public interface CommonConstants {
     String SIDE_KEY = "side";
 
     String PRIVIDER_KEY = "provider";
+
+    String METHODS_KEY = "methods";
+
+    String METHOD_KEY = "method";
 }

@@ -53,17 +53,17 @@ public abstract class Wrapper {
         }
 
         @Override
-        String[] getMethodNames() {
+        public String[] getMethodNames() {
             return OBJECT_METHODS;
         }
 
         @Override
-        String[] getDeclaredMethodNames() {
+        public String[] getDeclaredMethodNames() {
             return OBJECT_METHODS;
         }
 
         @Override
-        Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException {
+        public Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException {
             if ("getClass".equals(mn)) {
                 return instance.getClass();
             } else if ("toString".equals(mn)) {
@@ -126,14 +126,14 @@ public abstract class Wrapper {
      *
      * @return method name array.
      */
-    abstract String[] getMethodNames();
+    abstract public String[] getMethodNames();
 
     /**
      * get method name array.
      *
      * @return method name array.
      */
-    abstract String[] getDeclaredMethodNames();
+    abstract public String[] getDeclaredMethodNames();
 
     /**
      * invoke method.
@@ -144,7 +144,7 @@ public abstract class Wrapper {
      * @param args     argument array.
      * @return return value.
      */
-    abstract Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException;
+    public abstract Object invokeMethod(Object instance, String mn, Class<?>[] types, Object[] args) throws NoSuchMethodException, InvocationTargetException;
 
     /**
      * 获取代理类

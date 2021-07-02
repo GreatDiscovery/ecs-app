@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier;
 import java.nio.channels.IllegalSelectorException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Matcher;
 
 /**
@@ -21,6 +22,7 @@ import java.util.regex.Matcher;
  * @description:
  */
 public abstract class Wrapper {
+    private static final AtomicLong WRAPPER_CLASS_COUNTER = new AtomicLong(0);
     private static Map<Class<?>, Wrapper> WRAPPER_MAP = new ConcurrentHashMap<>();
     private static String[] EMPTY_STRING_ARRAY = new String[0];
     private static String[] OBJECT_METHODS = {"getClass", "toString", "equals", "hashCode"};
@@ -377,6 +379,10 @@ public abstract class Wrapper {
             throw new RuntimeException("Unknown primitive type: " + cl.getName());
         }
         return "(" + ReflectUtils.getName(cl) + ")" + name;
+    }
+
+    private static String propertyName(String pn) {
+        return pn.length() == 1 || Character.isLowerCase(pn.charAt(1)) ? Character.toLowerCase(pn.charAt(0)) + pn.substring(1) : pn;
     }
 
 }

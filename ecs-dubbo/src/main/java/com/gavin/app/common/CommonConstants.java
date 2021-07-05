@@ -33,4 +33,9 @@ public interface CommonConstants {
     String METHODS_KEY = "methods";
 
     String METHOD_KEY = "method";
+
+    /**
+     * dubbo部署的服务器IP
+     */
+    String DUBBO_IP_TO_BIND = "DUBBO_IP_TO_BIND";
 }

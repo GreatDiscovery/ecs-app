@@ -3,12 +3,15 @@ package com.gavin.app.common.config;
 import com.gavin.app.common.CommonConstants;
 import com.gavin.app.common.URL;
 import com.gavin.app.common.bytecode.Wrapper;
+import com.gavin.app.common.util.ConfigUtils;
 import com.gavin.app.common.util.StringUtils;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.config.util.ConfigValidationUtils;
 import com.gavin.app.rpc.model.ServiceDescriptor;
 import com.gavin.app.rpc.model.ServiceRepository;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,7 +103,32 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
         checkRegistry();
     }
 
+    /**
+     * 给provider绑定一个IP，变量有很多来源，需要考虑加载顺序问题。
+     * environment variables -> java system properties -> host property in config file ->
+         /etc/hosts -> default network address -> first available network address
+     * @param protocolConfig
+     * @param registryUrls
+     * @param map
+     */
     private void findConfigedHosts(ProtocolConfig protocolConfig, List<URL> registryUrls, Map<String, String> map) {
+        String value = getValueFromConfig(protocolConfig, CommonConstants.DUBBO_IP_TO_BIND);
+    }
 
+    private String getValueFromConfig(ProtocolConfig protocolConfig, String key) {
+        String protocolPrefix = protocolConfig.getName().toUpperCase() + "_";
+        String value = ConfigUtils.getSystemProperty(protocolPrefix + key);
+        if (StringUtils.isEmpty(value)) {
+            value = ConfigUtils.getSystemProperty(key);
+        }
+        return value;
+    }
+
+    public static void main(String[] args) {
+        try {
+            System.out.println(InetAddress.getLocalHost().getHostAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 }

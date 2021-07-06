@@ -10,6 +10,7 @@ import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.config.util.ConfigValidationUtils;
 import com.gavin.app.rpc.model.ServiceDescriptor;
 import com.gavin.app.rpc.model.ServiceRepository;
+import com.gavin.app.rpc.protocol.DubboProtocol;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -24,6 +25,7 @@ import java.util.Map;
 public class ServiceConfig<T> extends ServiceConfigBase<T> {
 
     private DubboBootstrap bootstrap;
+    private Integer portToBind;
 
     @Override
     public void export() {
@@ -78,6 +80,8 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             map.put(CommonConstants.METHODS_KEY, StringUtils.join(methodNames, ","));
         }
 
+        String hostToBind = findConfigedHosts(protocolConfig, registryURLs, map);
+        Integer portToBind = findConfigedPorts(protocolConfig, name, map);
     }
 
     /**
@@ -126,7 +130,7 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             }
         }
         map.put(CommonConstants.BIND_IP_KEY, hostToBind);
-        map.put(CommonConstants.ANYHOST_KEY, String.valueOf(true));
+        map.put(CommonConstants.ANYHOST_KEY, String.valueOf(anyhost));
         String hostToRegistry = hostToBind;
         return hostToRegistry;
     }
@@ -138,6 +142,50 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
             value = ConfigUtils.getSystemProperty(key);
         }
         return value;
+    }
+
+    /**
+     * 找一个绑定的端口，本地的host:port
+     * @param protocolConfig
+     * @param name
+     * @param map
+     * @return
+     */
+    private Integer findConfigedPorts(ProtocolConfig protocolConfig, String name, Map<String, String> map) {
+        portToBind = null;
+        String portStr = getValueFromConfig(protocolConfig, CommonConstants.DUBBO_PORT_TO_BIND);
+        portToBind = checkPort(portStr);
+
+        if (portToBind == null) {
+            if (name.equals(DubboProtocol.NAME)) {
+                portToBind = DubboProtocol.DEFAULT_PORT;
+            }
+
+            if (portToBind <= 0) {
+                portToBind = NetUtils.getAvailablePort();
+            }
+        }
+
+        map.put(CommonConstants.BIND_PORT_KEY, String.valueOf(portToBind));
+
+        Integer registryToBind = portToBind;
+        return registryToBind;
+    }
+
+    private Integer checkPort(String portStr) {
+        Integer port = null;
+        if (StringUtils.isEmpty(portStr)) {
+            return null;
+        }
+        try {
+            port = Integer.parseInt(portStr);
+            if (NetUtils.isInvalidPort(port)) {
+                throw new IllegalArgumentException("invalid port from env value: " + portStr);
+            }
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("invalid port from env value: " + portStr);
+        }
+        return port;
     }
 
     public static void main(String[] args) {

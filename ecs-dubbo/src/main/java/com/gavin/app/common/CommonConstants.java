@@ -42,6 +42,9 @@ public interface CommonConstants {
      * dubbo部署的服务器IP
      */
     String DUBBO_IP_TO_BIND = "DUBBO_IP_TO_BIND";
+    String DUBBO_PORT_TO_BIND = "DUBBO_PORT_TO_BIND";
 
     String BIND_IP_KEY = "bind.ip";
+
+    String BIND_PORT_KEY = "bind.port";
 }

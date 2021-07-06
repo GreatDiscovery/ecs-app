@@ -4,6 +4,7 @@ import com.gavin.app.common.CommonConstants;
 import com.gavin.app.common.URL;
 import com.gavin.app.common.bytecode.Wrapper;
 import com.gavin.app.common.util.ConfigUtils;
+import com.gavin.app.common.util.NetUtils;
 import com.gavin.app.common.util.StringUtils;
 import com.gavin.app.config.bootstrap.DubboBootstrap;
 import com.gavin.app.config.util.ConfigValidationUtils;
@@ -111,8 +112,23 @@ public class ServiceConfig<T> extends ServiceConfigBase<T> {
      * @param registryUrls
      * @param map
      */
-    private void findConfigedHosts(ProtocolConfig protocolConfig, List<URL> registryUrls, Map<String, String> map) {
-        String value = getValueFromConfig(protocolConfig, CommonConstants.DUBBO_IP_TO_BIND);
+    private String findConfigedHosts(ProtocolConfig protocolConfig, List<URL> registryUrls, Map<String, String> map) {
+        boolean anyhost = false;
+        String hostToBind = getValueFromConfig(protocolConfig, CommonConstants.DUBBO_IP_TO_BIND);
+        if (StringUtils.isEmpty(hostToBind)) {
+            try {
+                hostToBind = InetAddress.getLocalHost().getHostAddress();
+            } catch (UnknownHostException e) {
+                e.printStackTrace();
+            }
+            if (NetUtils.isInvalidLocalHost(hostToBind)) {
+                anyhost = true;
+            }
+        }
+        map.put(CommonConstants.BIND_IP_KEY, hostToBind);
+        map.put(CommonConstants.ANYHOST_KEY, String.valueOf(true));
+        String hostToRegistry = hostToBind;
+        return hostToRegistry;
     }
 
     private String getValueFromConfig(ProtocolConfig protocolConfig, String key) {

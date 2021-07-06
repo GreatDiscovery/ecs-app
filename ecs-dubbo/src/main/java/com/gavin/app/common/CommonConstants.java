@@ -10,6 +10,10 @@ public interface CommonConstants {
 
     String DUBBO_VERSION_KEY = "dubbo";
 
+    String ANYHOST_KEY = "anyhost";
+
+    String LOCALHOST_KEY = "localhost";
+
     /**
      * package version in the manifest
      */
@@ -38,4 +42,6 @@ public interface CommonConstants {
      * dubbo部署的服务器IP
      */
     String DUBBO_IP_TO_BIND = "DUBBO_IP_TO_BIND";
+
+    String BIND_IP_KEY = "bind.ip";
 }

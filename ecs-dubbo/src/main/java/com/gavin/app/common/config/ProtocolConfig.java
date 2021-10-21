@@ -27,4 +27,8 @@ public class ProtocolConfig extends AbstractConfig {
             this.id = name;
         }
     }
+
+    public String getName() {
+        return name;
+    }
 }

@@ -4,6 +4,8 @@ import org.springframework.util.ClassUtils;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author: Gavin
@@ -11,6 +13,10 @@ import java.lang.reflect.Modifier;
  * @description:
  */
 public class MethodUtils {
+
+    public static final Set<Class<?>> SIMPLE_TYPE = new HashSet<Class<?>>(8) {{
+        add(String.class);
+    }};
     /**
      * 判断是否是get方法
      *
@@ -23,7 +29,11 @@ public class MethodUtils {
                 !"getClass".equals(name) && !"getObject".equals(name) &&
                 Modifier.isPublic(method.getModifiers()) &&
                 method.getParameterTypes().length == 0 &&
-                ClassUtils.isPrimitiveOrWrapper(method.getReturnType());
+                (ClassUtils.isPrimitiveOrWrapper(method.getReturnType()) || isSimpleType(method.getReturnType()));
+    }
+
+    private static boolean isSimpleType(Class<?> clz) {
+        return SIMPLE_TYPE.contains(clz);
     }
 
     /**

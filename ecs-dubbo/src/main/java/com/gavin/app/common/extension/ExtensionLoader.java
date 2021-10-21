@@ -79,6 +79,7 @@ public class ExtensionLoader<T> {
                 e.printStackTrace();
             }
         }
+        // todo wrap逻辑
         if (wrap) {
             // 反射用扩展类包住instance
         }

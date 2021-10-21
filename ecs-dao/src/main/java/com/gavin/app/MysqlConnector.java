@@ -2,6 +2,7 @@ package com.gavin.app;
 
 import com.github.pagehelper.PageHelper;
 
+import java.io.PrintWriter;
 import java.sql.*;
 
 /**
@@ -32,6 +33,7 @@ public class MysqlConnector {
 
             // 打开链接
             System.out.println("连接数据库...");
+            DriverManager.setLogWriter(new PrintWriter(System.out));
             conn = DriverManager.getConnection(DB_URL, USER, PASS);
 
             // 执行查询

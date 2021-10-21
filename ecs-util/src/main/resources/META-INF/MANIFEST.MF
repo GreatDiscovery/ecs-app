@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: com.gavin.app.json.attach.AttachAgent
+Agent-Class: com.gavin.app.json.attach.Agent
+Can-Redefine-Classes: true
+Can-Retransform-Classes: true
+
+
+

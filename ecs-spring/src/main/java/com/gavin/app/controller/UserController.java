@@ -21,7 +21,8 @@ public class UserController {
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public User findOneUser(@RequestParam(value = "userName", required = true) String userName) {
         User user = userDao.findByName(userName);
-        System.out.println(JSONObject.toJSONString(user));
+        System.out.println(this.hashCode());
+        System.out.println("hello");
         return user;
     }
 }

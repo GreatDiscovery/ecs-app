@@ -16,7 +16,7 @@
         select
         <include refid="Base_Column_List" />
         from user
-        where name = #{name}
+        where name = #{name} limit 1;
     </select>
 
 </mapper>

@@ -9,4 +9,4 @@ mybatis:
   mapperLocations: classpath:mapper/*.xml
   typeAliasesPackage: com/gavin/app/domain
 server:
-  port: 8081
+  port: 8080

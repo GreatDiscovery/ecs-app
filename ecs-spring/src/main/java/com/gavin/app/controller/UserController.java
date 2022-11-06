@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 /**
  * @author gavin
  * @date 2021/4/17 上午9:54
@@ -24,5 +26,11 @@ public class UserController {
         System.out.println(this.hashCode());
         System.out.println("hello");
         return user;
+    }
+
+    @RequestMapping(value = "/api/users", method = RequestMethod.GET)
+    public List<User> findOneUsers(@RequestParam(value = "userNames", required = true) List<String> userNames) {
+        List<User> users = userDao.findByNames(userNames);
+        return users;
     }
 }

@@ -41,47 +41,60 @@
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+            <version>0.7.10</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
-<!--            <plugin>-->
-<!--                <artifactId>maven-assembly-plugin</artifactId>-->
-<!--                <version>3.1.0</version>-->
-<!--                <configuration>-->
-<!--                    &lt;!&ndash;指定最后产生 jar 名字&ndash;&gt;-->
-<!--                    <finalName>hotswap-jdk</finalName>-->
-<!--                    <appendAssemblyId>false</appendAssemblyId>-->
-<!--                    <descriptorRefs>-->
-<!--                        &lt;!&ndash;将工程依赖 jar 一块打包&ndash;&gt;-->
-<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--                    </descriptorRefs>-->
-<!--                    <archive>-->
-<!--                        <manifestEntries>-->
-<!--                            &lt;!&ndash;指定 class 名字&ndash;&gt;-->
-<!--                            <Agent-Class>-->
-<!--                                com.gavin.app.json.attach.Agent-->
-<!--                            </Agent-Class>-->
-<!--                            <Can-Redefine-Classes>-->
-<!--                                true-->
-<!--                            </Can-Redefine-Classes>-->
-<!--                        </manifestEntries>-->
-<!--                        <manifest>-->
-<!--                            &lt;!&ndash;指定 main 类名字，下面将会使用到&ndash;&gt;-->
-<!--                            <mainClass>com.gavin.app.json.attach.Agent</mainClass>-->
-<!--                        </manifest>-->
-<!--                    </archive>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
-<!--                        <phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
-<!--                        <goals>-->
-<!--                            <goal>single</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <!--            <plugin>-->
+            <!--                <artifactId>maven-assembly-plugin</artifactId>-->
+            <!--                <version>3.1.0</version>-->
+            <!--                <configuration>-->
+            <!--                    &lt;!&ndash;指定最后产生 jar 名字&ndash;&gt;-->
+            <!--                    <finalName>hotswap-jdk</finalName>-->
+            <!--                    <appendAssemblyId>false</appendAssemblyId>-->
+            <!--                    <descriptorRefs>-->
+            <!--                        &lt;!&ndash;将工程依赖 jar 一块打包&ndash;&gt;-->
+            <!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
+            <!--                    </descriptorRefs>-->
+            <!--                    <archive>-->
+            <!--                        <manifestEntries>-->
+            <!--                            &lt;!&ndash;指定 class 名字&ndash;&gt;-->
+            <!--                            <Agent-Class>-->
+            <!--                                com.gavin.app.json.attach.Agent-->
+            <!--                            </Agent-Class>-->
+            <!--                            <Can-Redefine-Classes>-->
+            <!--                                true-->
+            <!--                            </Can-Redefine-Classes>-->
+            <!--                        </manifestEntries>-->
+            <!--                        <manifest>-->
+            <!--                            &lt;!&ndash;指定 main 类名字，下面将会使用到&ndash;&gt;-->
+            <!--                            <mainClass>com.gavin.app.json.attach.Agent</mainClass>-->
+            <!--                        </manifest>-->
+            <!--                    </archive>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>make-assembly</id> &lt;!&ndash; this is used for inheritance merges &ndash;&gt;-->
+            <!--                        <phase>package</phase> &lt;!&ndash; bind to the packaging phase &ndash;&gt;-->
+            <!--                        <goals>-->
+            <!--                            <goal>single</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
     </build>
 

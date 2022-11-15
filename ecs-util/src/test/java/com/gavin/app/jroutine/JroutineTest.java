@@ -51,7 +51,7 @@ public class JroutineTest {
     }
 }
 
-
+// 需要增加JVM参数才能启动
 class JVirtualThread {
     // 1416 ms左右就完成了，很快
     public static void main(String[] args) throws InterruptedException {

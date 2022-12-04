@@ -1,8 +1,8 @@
 package com.gavin.app.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import com.gavin.app.dao.UserDao;
 import com.gavin.app.domain.User;
+import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,6 +20,7 @@ public class UserController {
 
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public User findOneUser(@RequestParam(value = "userName", required = true) String userName) {
+        PageHelper.startPage(1, 10);
         User user = userDao.findByName(userName);
         System.out.println(this.hashCode());
         System.out.println("hello");

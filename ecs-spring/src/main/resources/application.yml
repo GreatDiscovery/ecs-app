@@ -8,5 +8,3 @@ spring:
 mybatis:
   mapperLocations: classpath:mapper/*.xml
   typeAliasesPackage: com/gavin/app/domain
-server:
-  port: 8081

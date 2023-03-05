@@ -20,8 +20,6 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
-
-
     @RequestMapping(value = "/api/user", method = RequestMethod.GET)
     public User findOneUser(@RequestParam(value = "userName", required = true) String userName) {
         User user = userDao.findByName(userName);

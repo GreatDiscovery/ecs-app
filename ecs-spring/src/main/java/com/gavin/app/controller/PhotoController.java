@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.io.*;
 
 /**
  * 上传/下载blob文件照片
@@ -31,5 +34,26 @@ public class PhotoController {
         ModelAndView modelAndView = new ModelAndView("image");
         modelAndView.addObject("image", "data:image/png;base64," + photo64);
         return modelAndView;
+    }
+
+    @ApiOperation(value = "下载图片 ", httpMethod = "GET")
+    @RequestMapping(path = "photo/download")
+    public String downloadPhoto(@RequestParam("id") String id) throws Exception {
+        PhotoBytes photoBytes = service.getPhoto(Integer.parseInt(id));
+        byte[] photoBytes2 = photoBytes.getPhotoBytes();
+        File file = new File("/Users/gavin/Desktop/blob.png");
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        BufferedOutputStream bos = new BufferedOutputStream(fos);
+        try {
+            bos.write(photoBytes2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "index";
     }
 }

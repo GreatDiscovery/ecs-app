@@ -6,12 +6,19 @@ package com.gavin.app.pool;
  * @author gavin
  * @date 2023/4/11 12:11 AM
  */
-public class MyHikariPool extends MyPoolBase {
+public class MyHikariPool extends MyPoolBase implements MyConcurrentBag.MyBagEntryListener {
 
     private final MyConcurrentBag<MyPoolEntry> concurrentBag;
 
+
+
     public MyHikariPool(final MyHikariConfig config) {
         super(config);
-        this.concurrentBag = new MyConcurrentBag<MyPoolEntry>();
+        this.concurrentBag = new MyConcurrentBag<MyPoolEntry>(this);
+    }
+
+    @Override
+    public void addBagEntry(int waiting) {
+
     }
 }

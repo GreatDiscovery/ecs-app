@@ -18,6 +18,8 @@ public class MyConcurrentBag<T extends MyConcurrentBag.IConcurrentBagEntry> {
 
     private final AtomicInteger waiters;
 
+    private MyBagEntryListener listener;
+
     public interface IConcurrentBagEntry {
         int STATE_NOT_IN_USER = 0;
         int STATE_IN_USE = 1;
@@ -38,6 +40,7 @@ public class MyConcurrentBag<T extends MyConcurrentBag.IConcurrentBagEntry> {
         this.sharedList = new CopyOnWriteArrayList<T>();
         this.threadList = ThreadLocal.withInitial(() -> new ArrayList<Object>(16));
         this.waiters = new AtomicInteger();
+        this.listener = listener;
     }
 
     public void add(final T bagEntry) {
@@ -58,7 +61,7 @@ public class MyConcurrentBag<T extends MyConcurrentBag.IConcurrentBagEntry> {
         for (T bagEntry : sharedList) {
             if (bagEntry.compareAndSet(IConcurrentBagEntry.STATE_NOT_IN_USER, IConcurrentBagEntry.STATE_IN_USE)) {
                 if (waiting > 1) {
-
+                    listener.addBagEntry(waiting - 1);
                 }
                 return bagEntry;
             }

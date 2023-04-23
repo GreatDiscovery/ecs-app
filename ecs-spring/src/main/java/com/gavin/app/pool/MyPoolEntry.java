@@ -44,4 +44,8 @@ final public class MyPoolEntry implements MyConcurrentBag.IConcurrentBagEntry {
     public int getState() {
         return stateUpdater.get(this);
     }
+
+    private MyPoolEntry newPoolEntry() {
+        return null;
+    }
 }

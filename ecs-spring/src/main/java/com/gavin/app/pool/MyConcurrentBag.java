@@ -68,4 +68,8 @@ public class MyConcurrentBag<T extends MyConcurrentBag.IConcurrentBagEntry> {
         }
         return null;
     }
+
+    public int size() {
+        return sharedList.size();
+    }
 }

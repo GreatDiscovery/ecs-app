@@ -6,6 +6,13 @@ package com.gavin.app.pool;
  */
 public class MyPoolBase {
 
+    public final MyHikariConfig config;
+
     public MyPoolBase(final MyHikariConfig config) {
+        this.config = config;
+    }
+
+    MyPoolEntry newPoolEntry() {
+        return new MyPoolEntry(newConnection(), this, );
     }
 }

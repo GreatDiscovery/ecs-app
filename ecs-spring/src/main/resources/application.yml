@@ -20,6 +20,3 @@ mybatis:
   typeAliasesPackage: com/gavin/app/domain
 server:
   port: 8081
-logging:
-  level:
-    com.gavin.app.dao: debug

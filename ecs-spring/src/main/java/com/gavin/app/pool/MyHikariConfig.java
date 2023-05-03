@@ -2,6 +2,8 @@ package com.gavin.app.pool;
 
 import lombok.Data;
 
+import java.util.Properties;
+
 /**
  * @author gavin
  * @date 2023/4/11 12:27 AM
@@ -15,5 +17,7 @@ public class MyHikariConfig {
 
     private String jdbcUrl;
     private String driverClassName;
+
+    private Properties dataSourceProperties;
 
 }

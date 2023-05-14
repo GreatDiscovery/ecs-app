@@ -20,4 +20,14 @@ public class MyHikariConfig {
 
     private Properties dataSourceProperties;
 
+    private String connectionTestQuery;
+
+    private boolean autoCommit;
+
+    private boolean isolateInternalQueries;
+
+    public MyHikariConfig() {
+        maxPoolSize = -1;
+        autoCommit = true;
+    }
 }

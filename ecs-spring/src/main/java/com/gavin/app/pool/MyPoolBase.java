@@ -3,6 +3,7 @@ package com.gavin.app.pool;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import javax.sql.DataSource;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLTransientConnectionException;
@@ -31,6 +32,7 @@ public class MyPoolBase {
     private final boolean isIsolateInternalQueries;
 
     private int defaultTransactionIsolation;
+    private int transactionIsolation;
 
     public MyPoolBase(final MyHikariConfig config) {
         this.config = config;
@@ -76,8 +78,20 @@ public class MyPoolBase {
         netTimeoutExecutor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setDaemon(true).setNameFormat("netTimeout").build());
     }
 
-    private void setupConnection(final Connection connection) {
-        checkDriverSupport(connection);
+    private void setupConnection(final Connection connection) throws ConnectionSetupException {
+        try {
+            checkDriverSupport(connection);
+        } catch (SQLException e) {
+            throw new ConnectionSetupException(e);
+        }
+    }
+
+    static class ConnectionSetupException extends Exception implements Serializable {
+        private static final long serialVersionUID = 929872118275916521L;
+
+        ConnectionSetupException(Throwable t) {
+            super(t);
+        }
     }
 
     private void checkDriverSupport(final Connection connection) throws SQLException {
@@ -93,6 +107,13 @@ public class MyPoolBase {
 
         try {
             defaultTransactionIsolation = connection.getTransactionIsolation();
+            if (defaultTransactionIsolation == -1) {
+                transactionIsolation = defaultTransactionIsolation;
+            }
+        } catch (SQLException e) {
+            if (e.getSQLState() != null && !e.getSQLState().startsWith("08")) {
+                throw e;
+            }
         }
     }
 
@@ -108,7 +129,7 @@ public class MyPoolBase {
                 }
             } catch (Throwable ignore) {
             }
-         }
+        }
     }
 
     private void executeSql(final Connection connection, final String sql, final boolean isCommit) throws SQLException {

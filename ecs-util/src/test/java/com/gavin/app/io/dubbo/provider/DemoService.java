@@ -9,8 +9,4 @@ import java.util.concurrent.CompletableFuture;
  */
 public interface DemoService {
     String sayHello(String name);
-
-    default CompletableFuture<String> sayHelloAsyn(String name) {
-        return CompletableFuture.completedFuture(sayHello(name));
-    }
 }

@@ -15,10 +15,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class DemoServiceImpl implements DemoService {
     private static final Logger logger = LoggerFactory.getLogger(DemoServiceImpl.class);
-    @Override
-    public CompletableFuture<String> sayHelloAsyn(String name) {
-        return null;
-    }
 
     @Override
     public String sayHello(String name) {

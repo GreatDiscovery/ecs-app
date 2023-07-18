@@ -19,4 +19,13 @@
         where name = #{name} limit 1;
     </select>
 
+    <select id="findByNames" resultMap="BaseResultMap">
+        select * from user
+        where
+        <foreach item="item" index="index" collection="list"
+                 open="name in (" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
 </mapper>

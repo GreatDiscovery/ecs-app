@@ -2,7 +2,9 @@ package com.gavin.app.io.dubbo;
 
 import com.gavin.app.io.dubbo.provider.DemoService;
 import com.gavin.app.io.dubbo.provider.DemoServiceImpl;
+import org.apache.dubbo.common.constants.CommonConstants;
 import org.apache.dubbo.config.ApplicationConfig;
+import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.ServiceConfig;
 import org.apache.dubbo.config.bootstrap.DubboBootstrap;
@@ -26,8 +28,11 @@ public class ProviderApplication {
         service.setRef(new DemoServiceImpl());
 
         DubboBootstrap bootstrap = DubboBootstrap.getInstance();
+        ProtocolConfig protocolConfig = new ProtocolConfig(CommonConstants.DUBBO, 8888);
+        protocolConfig.setTelnet("ls,ps,cd,pwd,trace,count,invoke,status,log,help,clear,exit");
         bootstrap.application(new ApplicationConfig("dubbo-demo-api-provider"))
                 .registry(new RegistryConfig("zookeeper://39.100.104.52:31811"))
+                .protocol(protocolConfig)
                 .service(service)
                 .start()
                 .await();

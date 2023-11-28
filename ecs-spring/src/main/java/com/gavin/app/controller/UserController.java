@@ -2,6 +2,7 @@ package com.gavin.app.controller;
 
 import com.gavin.app.dao.UserDao;
 import com.gavin.app.domain.User;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

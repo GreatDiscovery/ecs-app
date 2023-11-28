@@ -1,8 +1,8 @@
 package com.gavin.app.jroutine;
 
-import co.paralleluniverse.fibers.Fiber;
-import co.paralleluniverse.fibers.SuspendExecution;
-import co.paralleluniverse.strands.SuspendableRunnable;
+//import co.paralleluniverse.fibers.Fiber;
+//import co.paralleluniverse.fibers.SuspendExecution;
+//import co.paralleluniverse.strands.SuspendableRunnable;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -59,13 +59,13 @@ class JVirtualThread {
         long start = System.currentTimeMillis();
 
         for (int i = 0; i < 10000; i++) {
-            new Fiber<>(new SuspendableRunnable() {
-                @Override
-                public void run() throws SuspendExecution, InterruptedException {
-                    Fiber.sleep(1000);
-                    countDownLatch.countDown();
-                }
-            }).start();
+//            new Fiber<>(new SuspendableRunnable() {
+//                @Override
+//                public void run() throws SuspendExecution, InterruptedException {
+//                    Fiber.sleep(1000);
+//                    countDownLatch.countDown();
+//                }
+//            }).start();
         }
 
         countDownLatch.await();

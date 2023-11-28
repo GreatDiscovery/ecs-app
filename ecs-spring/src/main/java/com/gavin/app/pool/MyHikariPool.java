@@ -73,7 +73,7 @@ public class MyHikariPool extends MyPoolBase implements MyConcurrentBag.MyBagEnt
     }
 
     private MyPoolEntry createPoolEntry() {
-        MyPoolEntry poolEntry = new();
+//        MyPoolEntry poolEntry = new();
         return null;
     }
 }
